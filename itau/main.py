@@ -37,7 +37,6 @@ class Itau:
         self._authenticate8()
         self._authenticate9()
         self._authenticate10()
-        self._authenticate11()
 
     def get_statements(self):
         op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
@@ -146,14 +145,10 @@ class Itau:
         self._session.post(ROUTER_URL, headers=headers)
 
     def _authenticate8(self):
-        headers = {'op': self._op5}
-        self._session.post(ROUTER_URL, headers=headers)
-
-    def _authenticate9(self):
         headers = {'op': self._op6}
         self._session.post(ROUTER_URL, headers=headers)
 
-    def _authenticate10(self):
+    def _authenticate9(self):
         headers = {'op': self._op7}
         response = self._session.post(ROUTER_URL, headers=headers)
 
@@ -175,7 +170,7 @@ class Itau:
         for char in self.password:
             self._letter_password += password_mapper[char]
 
-    def _authenticate11(self):
+    def _authenticate10(self):
         headers = {'op': self._op8}
         data = {
             'op': self._op8,
