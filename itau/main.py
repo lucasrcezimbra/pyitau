@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
+ITAU_URL = 'https://www.itau.com.br'
 ROUTER_URL = 'https://internetpf2.itau.com.br/router-app/router'
 
 
@@ -70,7 +71,7 @@ class Itau:
         return response.json()
 
     def _authenticate0(self):
-        response = self._session.get('https://www.itau.com.br')
+        response = self._session.get(ITAU_URL)
         soup = BeautifulSoup(response.text, features='html.parser')
         form = soup.find('form', attrs={'name': 'banklineAgConta'})
         self._id = form.find('input', attrs={'name': 'id'}).attrs['value']

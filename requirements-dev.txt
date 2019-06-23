@@ -1,3 +1,4 @@
 -r requirements.txt
-
 pytest==4.6.3
+pytest-mock==1.10.4
+responses==0.10.6
