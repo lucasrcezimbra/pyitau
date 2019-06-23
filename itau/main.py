@@ -36,7 +36,6 @@ class Itau:
         self._authenticate7()
         self._authenticate8()
         self._authenticate9()
-        self._authenticate10()
 
     def get_statements(self):
         op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
@@ -127,10 +126,6 @@ class Itau:
         self._session.post(ROUTER_URL, headers=headers)
 
     def _authenticate5(self):
-        headers = {'op': self._op3}
-        self._session.post(ROUTER_URL, headers=headers)
-
-    def _authenticate6(self):
         headers = {'op': self._op4}
         response = self._session.post(ROUTER_URL, headers=headers)
         self._op5 = re.search('__opSignCommand = "(.*?)";', response.text).group(1)
@@ -140,15 +135,15 @@ class Itau:
             response.text
         ).group(1)
 
-    def _authenticate7(self):
+    def _authenticate6(self):
         headers = {'op': self._op5}
         self._session.post(ROUTER_URL, headers=headers)
 
-    def _authenticate8(self):
+    def _authenticate7(self):
         headers = {'op': self._op6}
         self._session.post(ROUTER_URL, headers=headers)
 
-    def _authenticate9(self):
+    def _authenticate8(self):
         headers = {'op': self._op7}
         response = self._session.post(ROUTER_URL, headers=headers)
 
@@ -170,7 +165,7 @@ class Itau:
         for char in self.password:
             self._letter_password += password_mapper[char]
 
-    def _authenticate10(self):
+    def _authenticate9(self):
         headers = {'op': self._op8}
         data = {
             'op': self._op8,
