@@ -1,7 +1,7 @@
-Itaú
+pyitau
 ============
 
-Unofficial client to access your bank data
+Unofficial client to access your Itaú bank data
 
 
 Installation
