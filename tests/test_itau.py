@@ -1,6 +1,6 @@
 import requests
 
-from itau.main import Itau
+from pyitau.main import Itau
 
 
 def test_init():

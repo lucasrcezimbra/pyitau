@@ -1,6 +1,6 @@
 import responses
 
-from itau.main import ITAU_URL
+from pyitau.main import ITAU_URL
 
 
 @responses.activate
