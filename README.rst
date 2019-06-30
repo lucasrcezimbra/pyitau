@@ -4,11 +4,16 @@ Itaú
 Unofficial client to access your bank data
 
 
+Installation
+~~~~~~~~~~~~~
+``pip install pyitau``
+
+
 How to Use
 ~~~~~~~~~~~~~
 .. code-block:: python
 
-    from itau import Itau
+    from pyitau import Itau
 
     # Login
     itau = Itau(agency='0000', account='12345', account_digit='5', password='012345')

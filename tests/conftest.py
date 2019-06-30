@@ -1,6 +1,6 @@
 import pytest
 
-from itau import Itau
+from pyitau import Itau
 
 
 @pytest.fixture
