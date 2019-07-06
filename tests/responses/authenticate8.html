@@ -1,0 +1,342 @@
+
+
+
+
+<section class="main container clearfix">
+	<div class="row clearfix ">
+		<div class="col8" role="main">
+			
+			<div class="modulo home modulo-login row clearfix">
+
+				<form id="frmKey" method="post" accept-charset="utf-8" action="#">
+					<fieldset class="padding-baixo10">
+						<input type="hidden" id="op" name="op" value="PYITAU_OP8">
+						<input type="hidden" id="placeHolderSenhaTeclado" value="">
+						<div class="dados clearfix">
+							<h1>Ol&aacute;, <strong>Pyitau</strong></h1>
+							
+							<p>
+								<strong>
+								
+									
+									
+										<label for="senha">digite sua senha eletr&ocirc;nica no teclado virtual:</label>
+									
+								
+								</strong>
+							</p>
+							<div class="row clearfix">
+								<div class="left t9">
+									<input type="password" value="" id="senha" readonly 
+											aria-required="true" aria-invalid="false" name="senha" aria-label="senha eletr&ocirc;nica" maxlength="8">
+								</div>
+							</div>
+							
+															
+								<div class="left margem-cima10">
+									
+										<a href="javascript:;" id="esqueciSenha" aria-label="esqueceu sua senha?">
+											esqueceu sua senha?
+										</a>
+									
+								</div>
+							
+							<div class="left margem-cima15">
+								<br>	
+								<p>
+									<small><strong>senha eletr&ocirc;nica:</strong> usada para
+										acessar a internet</small>
+								</p>
+								<p>
+									<small><strong>senha do cart&atilde;o:</strong> usada para
+										acessar o caixa eletr&ocirc;nico</small>
+								 </p>
+							</div>
+						</div>
+
+						<div class="teclado clearfix">
+							<div class="teclas clearfix">
+								
+									<a href="javascript:;" aria-label="3 ou 5" rel="tecla_A" class="tecla left campoTeclado" role="button" >3 ou 5</a>
+								
+									<a href="javascript:;" aria-label="7 ou 8" rel="tecla_H" class="tecla left campoTeclado" role="button" >7 ou 8</a>
+								
+									<a href="javascript:;" aria-label="1 ou 6" rel="tecla_U" class="tecla left campoTeclado" role="button" >1 ou 6</a>
+								
+									<a href="javascript:;" aria-label="0 ou 9" rel="tecla_K" class="tecla left campoTeclado" role="button" >0 ou 9</a>
+								
+									<a href="javascript:;" aria-label="2 ou 4" rel="tecla_Z" class="tecla left campoTeclado" role="button" >2 ou 4</a>
+								
+								<a href="javascript:;" class="tecla icon left" aria-label="apagar todo o campo de senha eletr&ocirc;nica" id="btnApagar" role="button" ><span class="icon-tecla-voltar"></span></a>
+							</div>							
+							<div class="row clearfix">
+								<a href="javascript:;" class="itau-button btn-teclado-login left" aria-label="acessar" id="acessar" role="button" >acessar</a>
+							</div>
+						</div>							
+					</fieldset>
+				</form>
+			</div>
+			<div class="box-info box-info-alerta">
+				<span class="icone"></span>
+				<p>
+					<small> Se o nome acima n&atilde;o estiver correto, n&atilde;o continue a opera&ccedil;&atilde;o e ligue para o telefone 0300 100 1213.</small>
+				<p>
+			</div>
+		</div>
+	
+		
+
+<div class="col4" role="complementary">		
+	
+
+
+
+	
+
+<div class="modulo home modulo-sidebar margem-baixo5">
+	<span class="ico ico-seguranca"></span>
+	<h2 class="fonte-tamanho13">Dicas de seguran&ccedil;a</h2>
+	<ul class="bullet">
+		<li>O Ita&uacute; nunca faz liga&ccedil;&otilde;es solicitando senhas ou c&oacute;digos do
+			iToken. Caso liguem para voc&ecirc; solicitando estes dados, n&atilde;o informe.</li>
+		<li>A atualiza&ccedil;&atilde;o dos aplicativos Ita&uacute; ou Guardi&atilde;o 30 horas &eacute;
+			autom&aacute;tica e n&atilde;o requer a digita&ccedil;&atilde;o de sua senha ou c&oacute;digo do iToken.</li>
+		<li>Mantenha sempre atualizado seu antiv&iacute;rus e nunca abra
+			arquivos anexados em e-mails cujo remetente seja desconhecido. Assim,
+			voc&ecirc; evita poss&iacute;veis ataques em seu computador.</li>
+	</ul>
+</div>
+
+	
+
+<div class="modulo home modulo-sidebar padding-baixo15">
+
+	<h2 class="fonte-tamanho13">
+		<span class="ico ico-telefone"></span>Suporte digital
+	</h2>
+	<div>
+		<p>
+			0300 100 1213
+		</p>
+		<p class="margem-baixo20">
+			Todas as localidades
+		</p>
+		<p>
+			De segunda a sexta, das 7h &agrave;s 22h.
+		</p>
+		<p>
+			Aos s&aacute;bados, domingos e feriados, das 8h &agrave;s 22h.
+		</p>
+	</div>
+</div>
+
+</div>
+
+		
+	</div>
+</section>
+<script type="text/javascript">			
+	GA.pushPageView('loginAgenciaContaTecladoPF');
+	
+	$("#instalarIdGuardio").on("click", function() {
+		GA.pushLogin((isCorrentista==true ? "guardiaoPF" : "guardiaoNC"),'instalar');
+	});
+	
+	$("#saibaIdGuardiao").on("click", function() {
+		GA.pushLogin((isCorrentista==true ? "guardiaoPF" : "guardiaoNC"),'saibaMais');
+	});
+	
+	$("#instalarIdApp").on("click", function() {
+		GA.pushLogin((isCorrentista==true ? "appPF" : "appNC"),'instalar');
+	});
+	
+	$("#saibaIdApp").on("click", function() {
+		GA.pushLogin((isCorrentista==true ? "appPF" : "appNC"),'saibaMais');
+	});				
+
+    $('#senha').on('click', function() {
+		mostrarToolTip('Utilize o teclado virtual.');
+	});
+    
+    $('#esqueciSenha').click(function () {
+    	redirectEsqueciSenha();
+    });
+    
+    $('#esqueciSenha').keydown(function (e) {
+    	//enter key
+    	if (e.keyCode == 13) {
+    		redirectEsqueciSenha();
+    	}
+    });
+    
+    function redirectEsqueciSenha() {
+		$('#op').val('Bx9GsceQ8GBAXFHpT1gm6pXlJbTfxopKgdEH1QO8KW0=;');
+       	$('#frmKey').submit();   	
+    }
+
+    $('#senha').on('keydown', function(e) {    	
+		var keyCode = e.keyCode || e.which; 
+		//Acessibilidade: ignora tab, control, shift key
+		if (keyCode == 9 || keyCode == 17 || keyCode == 16) {
+			removerToolTip();
+			return;
+		}
+		mostrarToolTip('Utilize o teclado virtual.');
+	});
+    
+	$('#senha').on('focusout', function() {
+		removerToolTip();
+    });
+	
+	function removerToolTip() {
+		if ($('#senha').hasClass('invalido')) {
+			$('#senha').removeClass('invalido');
+		}
+		if ($('#senhaballoon').length) {
+			$('#senha').attr('aria-invalid', 'false');
+			hideBalloon($('#senha'));
+		}					
+	}
+    
+	function mostrarToolTip(msg) {
+		removerToolTip();
+		var senha = $('#senha');
+		senha.addClass('invalido');
+		$('#senha').attr('aria-invalid', 'true');
+		senha.focus();
+		showBalloon(senha, msg);
+	}
+	
+	function showBalloon(elemento, mensagem) {
+        var ballonHtml = '<div id="senhaballoon" class="mensagem-erro" role="alert">'
+                       + '<span class="erro-seta" style="left: 8px"></span>'
+                       + '<span class="erro-campo">' + mensagem + '</span>'
+                       + '</div>';
+        $(elemento).before($.validador.util.formatar(ballonHtml, [mensagem]));
+		adjustTooltipPosition(elemento);
+    }
+
+    function hideBalloon(elemento) {
+        $('#senhaballoon').remove();
+    }
+    
+    function removerPlaceHolderSenha() {    
+    	if ($('#placeHolderSenhaTeclado').val().length) {
+    		$('#placeHolderSenhaTeclado').val('');
+    		$('#senha').val('');
+        	$('#senha').attr('type','password');
+        	$('#senha').removeAttr('style');
+    	}
+    }
+    
+    function adicionarPlaceHolderSenha() {
+    	$("#senha").val('');
+		$('#senha').attr('type','text');
+		$('#senha').attr('style','color: #D3CADB');		
+        $("#senha").val('senha eletr\u00f4nica');  
+        $('#placeHolderSenhaTeclado').val('placeholderEnabled');        
+    }
+ 
+	$('#btnApagar').click(function () {
+		adicionarPlaceHolderSenha();
+     });
+
+	$('.campoTeclado').on('click', function(event) {
+		removerPlaceHolderSenha();
+		event.preventDefault();
+		var strRel = $(this).attr('rel');
+		if ($("#senha").val() != undefined) {
+			var passTmp = $("#senha").val();
+			if (passTmp.length >= 8) {
+				return false;
+			} else {
+				passTmp += strRel.split("_")[1];
+			}
+			$("#senha").val(passTmp);
+		}
+	});
+	
+	function senhaTamanhoIncorreto() {
+		var senha = $('#senha').val().length;
+		if (senha >= 1 && senha <= 5) {
+			mostrarToolTip('Senha incompleta. Redigite a senha.');
+			return true;
+		}	
+		return false;
+	}
+	
+	function campoSenhaVazio() {
+		var senha = $('#senha').val().length;
+		var placeholder = $('#placeHolderSenhaTeclado').val().length;
+		if (senha < 1 || placeholder) {
+			mostrarToolTip('Campo de preenchimento obrigat\u00f3rio.');
+			return true;
+		}			
+		return false;
+	}
+
+	$('#acessar').on('click', function() {
+		if (campoSenhaVazio() || senhaTamanhoIncorreto()) {
+			return;
+		}
+		GA.pushLogin('teclado', 'PF');
+		$('#frmKey').submit();
+	});
+	
+  	//on page load
+	adicionarPlaceHolderSenha();
+  
+	/**
+	 * Acessibilidade - Inicio
+	 */
+	 $('div.teclas').next('div').append("<p class='text-access-hide'  aria-hidden='true' id='msgTeclaPress' tabindex='-1'>pressionado</p>");
+	//trato o click nos botoes
+	var btPress;
+	$('div.teclas a.tecla').on('click',function(){
+		$("#msgTeclaPress").attr('aria-hidden','false');
+		btPress = this;
+		$("#msgTeclaPress").focus();
+	});
+	//foco na mensagem
+	$('#msgTeclaPress').on('focus',function(){
+		setTimeout(function(){
+			$("#msgTeclaPress").attr('aria-hidden','true');
+			btPress.focus();
+		}, 500);
+	});
+	
+	/**
+	 * Acessibilidade - Fim
+	 */
+</script>
+
+
+
+<script>
+	try{
+		var url = window.location.protocol + "//" + window.location.hostname + window.location.pathname;
+	
+		function carregaDataLayer() {
+			try{
+				adobeDataLayer.init();
+				adobeDataLayer.pushSite("IT","NL", "PF","Web");
+				adobeDataLayer.pushPage("Login",url,"","","","","NI","","IT:NL:PF:Login:Teclado");
+				adobeDataLayer.pushVisitor("Cliente PF|Correntista", "Person", '081F7DDF894F7E1FD51D12F974164DEC', "","", "NI");
+				adobeDataLayer.pushCustom("agencia", "1234");
+				adobeDataLayer.pushCustom("statusSenhaEletronica", 'Cadastrada');
+				adobeDataLayer.pushCustom("validacaoDeSenhaEletronica", 'Nao');
+				adobeDataLayer.pushCustom("codigoDaTitularidade", '18');
+				adobeDataLayer.pushCustom("tipoDeSite", 'Producao');
+				adobeDataLayer.pushCustom("contaOnline", "");
+				adobeDataLayer.pushCustom("dataDeAberturaDaConta","");
+				if('prelogin' != ""){			
+					adobeDataLayer.pushCustom("events",  'prelogin');
+				}
+				adobeDataLayer.pushCustom("event",  '');
+				adobeDataLayer.pushRule("pageLoad");
+				adobeDataLayer.sendDataLayer();
+			}catch(e){}
+		};
+		carregaDataLayer();
+	}catch(e){}
+</script>
