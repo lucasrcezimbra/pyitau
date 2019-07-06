@@ -61,13 +61,17 @@ class Itau:
         op4 = soup.find('a').attrs['data-op']
 
         response = self._session.post(ROUTER_URL, headers={'op': op4})
+        pattern = 'function consultarLancamentosPorPeriodo.*' \
+                  '"periodoConsulta" : parametrosPeriodo.*' \
+                  'url = "(.*?)";'
         op5 = re.search(
-            'function carregaExtrato.*"op" : "(.*?)"',
+            pattern,
             response.text,
             flags=re.DOTALL,
         ).group(1)
 
-        response = self._session.post(ROUTER_URL, headers={'op': op5})
+        response = self._session.post(
+            ROUTER_URL, data={'periodoConsulta': 90}, headers={'op': op5})
         return response.json()
 
     def _authenticate0(self):
