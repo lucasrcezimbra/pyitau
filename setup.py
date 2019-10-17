@@ -4,7 +4,6 @@ from setuptools import setup
 
 
 README = os.path.join(os.path.dirname(__file__), 'README.rst')
-REQUIREMENTS = os.path.join(os.path.dirname(__file__), 'requirements.txt')
 
 
 if __name__ == "__main__":
@@ -18,7 +17,7 @@ if __name__ == "__main__":
         license="LGPLv2",
         url='https://github.com/Lrcezimbra/pyitau',
         keywords=['pyitau', 'itau', 'api', 'client', 'requests', 'banking', 'bank', 'finance', 'accounting'],
-        install_requires=open(REQUIREMENTS).readlines(),
+        install_requires=['beautifulsoup4', 'requests'],
         packages=['pyitau'],
         zip_safe=False,
         include_package_data=True,
