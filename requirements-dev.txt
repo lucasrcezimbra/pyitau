@@ -1,7 +1,7 @@
 -e .
 
 coveralls==1.10.0
-pytest==5.3.4
+pytest==5.3.5
 pytest-cov==2.8.1
 pytest-mock==2.0.0
 responses==0.10.9
