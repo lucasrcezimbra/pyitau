@@ -41,3 +41,7 @@ How to Use
 Contributing
 ~~~~~~~~~~~~~
 Contributions are welcome, feel free to open an Issue or Pull Request
+
+~~~~~~~~~~~~~
+
+[ ~ Dependencies scanned by PyUp.io ~ ]
