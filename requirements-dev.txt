@@ -4,4 +4,4 @@ coveralls==2.0.0
 pytest==6.2.2
 pytest-cov==2.9.0
 pytest-mock==3.5.1
-responses==0.10.14
+responses==0.12.1
