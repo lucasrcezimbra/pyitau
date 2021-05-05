@@ -15,7 +15,7 @@ if __name__ == "__main__":
         author="Lucas Rangel Cezimbra",
         author_email="lucas.cezimbra@gmail.com",
         license="LGPLv2",
-        url='https://github.com/Lrcezimbra/pyitau',
+        url='https://github.com/lucasrcezimbra/pyitau',
         keywords=['pyitau', 'itau', 'api', 'client', 'requests', 'banking', 'bank', 'finance', 'accounting'],
         install_requires=['beautifulsoup4', 'requests'],
         packages=['pyitau'],
