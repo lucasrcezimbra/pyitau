@@ -10,7 +10,7 @@ if __name__ == "__main__":
     setup(
         name='pyitau',
         description='Scraper to download data from Itaú Internet Banking',
-        version='0.0.6',
+        version='1.0.0',
         long_description=open(README).read(),
         author="Lucas Rangel Cezimbra",
         author_email="lucas.cezimbra@gmail.com",
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         zip_safe=False,
         include_package_data=True,
         classifiers=[
-            'Development Status :: 4 - Beta',
+            'Development Status :: 5 - Production/Stable',
             'Intended Audience :: Developers',
             'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)',
             'Programming Language :: Python :: 3',
