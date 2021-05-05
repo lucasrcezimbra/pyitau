@@ -51,7 +51,7 @@ class FirstRouterPage:
 
     @property
     def client_id(self):
-        return re.search("var clientId=\'(.*?)\';", self._text).group(1)
+        return re.search(r"var clientId=\'(.*?)\';", self._text).group(1)
 
     @property
     def flow_id(self):
@@ -59,15 +59,15 @@ class FirstRouterPage:
 
     @property
     def secapdk(self):
-        return re.search("\$SECAPDK.uidap\(\'(.*?)\'\);", self._text).group(1)
+        return re.search(r"\$SECAPDK.uidap\(\'(.*?)\'\);", self._text).group(1)
 
     @property
     def secbcatch(self):
-        return re.search("\$SECBCATCH.uidap\(\'(.*)\'\);", self._text).group(1)
+        return re.search(r"\$SECBCATCH.uidap\(\'(.*)\'\);", self._text).group(1)
 
     @property
     def perform_request(self):
-        return re.search('router.performRequest\("(.*?)", ', self._text).group(1)
+        return re.search(r'router.performRequest\("(.*?)", ', self._text).group(1)
 
 
 class SecondRouterPage:
@@ -90,7 +90,7 @@ class SecondRouterPage:
     @property
     def guardiao_cb(self):
         return re.search(
-            'var guardiao_cb = function\(\) {\n\t\t\tloadPage\(\'(.*?)\'\);',
+            r'var guardiao_cb = function\(\) {\n\t\t\tloadPage\(\'(.*?)\'\);',
             self._text
         ).group(1)
 

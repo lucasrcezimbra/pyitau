@@ -42,6 +42,16 @@ Contributing
 ~~~~~~~~~~~~~
 Contributions are welcome, feel free to open an Issue or Pull Request
 
+.. code-block:: bash
+
+    git clone https://github.com/lucasrcezimbra/pyitau
+    cd pyitau
+    python -m venv .venv
+    pip install -r requirements-dev.txt
+    pre-commit install
+    pytest
+
+
 ~~~~~~~~~~~~~
 
 [ ~ Dependencies scanned by PyUp.io ~ ]
