@@ -1,0 +1,29 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: tests/responses/
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.4.0
+  hooks:
+    - id: check-ast
+    - id: check-case-conflict
+    - id: debug-statements
+    - id: end-of-file-fixer
+    - id: mixed-line-ending
+    - id: no-commit-to-branch
+      args: [--branch, master]
+    - id: requirements-txt-fixer
+    - id: trailing-whitespace
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.8.0a2
+  hooks:
+    - id: flake8
+- repo: https://github.com/PyCQA/bandit
+  rev: 1.6.2
+  hooks:
+    - id: bandit
+      args: [--exclude, tests]
+- repo: https://github.com/timothycrosley/isort
+  rev: 5.0.5
+  hooks:
+    - id: isort
