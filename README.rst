@@ -47,7 +47,7 @@ Contributions are welcome, feel free to open an Issue or Pull Request
     git clone https://github.com/lucasrcezimbra/pyitau
     cd pyitau
     python -m venv .venv
-    pip install pip install -r requirements-dev.txt
+    pip install -r requirements-dev.txt
     pre-commit install
     pytest
 
