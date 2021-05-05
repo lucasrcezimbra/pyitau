@@ -3,8 +3,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from pyitau.pages import HomePage, FirstRouterPage, SecondRouterPage, PasswordPage
-
+from pyitau.pages import (FirstRouterPage, HomePage, PasswordPage,
+                          SecondRouterPage)
 
 ITAU_URL = 'https://www.itau.com.br'
 ROUTER_URL = 'https://internetpf2.itau.com.br/router-app/router'

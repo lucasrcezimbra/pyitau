@@ -1,4 +1,3 @@
-import responses
 from bs4 import BeautifulSoup
 
 from pyitau.pages import HomePage

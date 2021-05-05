@@ -2,7 +2,6 @@ import os
 
 from setuptools import setup
 
-
 README = os.path.join(os.path.dirname(__file__), 'README.rst')
 
 
@@ -16,7 +15,8 @@ if __name__ == "__main__":
         author_email="lucas.cezimbra@gmail.com",
         license="LGPLv2",
         url='https://github.com/lucasrcezimbra/pyitau',
-        keywords=['pyitau', 'itau', 'api', 'client', 'requests', 'banking', 'bank', 'finance', 'accounting'],
+        keywords=['pyitau', 'itau', 'api', 'client', 'requests',
+                  'banking', 'bank', 'finance', 'accounting'],
         install_requires=['beautifulsoup4', 'requests'],
         packages=['pyitau'],
         zip_safe=False,
