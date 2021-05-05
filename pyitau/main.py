@@ -78,8 +78,8 @@ class Itau:
         response = self._session.get(ITAU_URL)
         soup = BeautifulSoup(response.text, features='html.parser')
         form = soup.find('form', attrs={'name': 'banklineAgConta'})
-        self._id = form.find('input', attrs={'name': 'id'}).attrs['value']
-        self._op1 = form.find('input', attrs={'name': 'op'}).attrs['value']
+        self._id = form.find('input', attrs={'name': 'portal'}).attrs['value']
+        self._op1 = form.find('input', attrs={'name': 'tipoLogon'}).attrs['value']
 
     def _authenticate1(self):
         data = {
