@@ -1,8 +1,8 @@
 -e .
 
-coveralls==2.0.0
+coveralls==3.0.1
 pre-commit==2.9.3
-pytest==5.4.2
+pytest==6.2.4
 pytest-cov==2.9.0
-pytest-mock==3.1.0
-responses==0.10.14
+pytest-mock==3.6.0
+responses==0.13.3

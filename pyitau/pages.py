@@ -23,14 +23,14 @@ class HomePage:
         """
         Campo id do formulário de Agência/Conta
         """
-        return self._form.find('input', attrs={'name': 'id'}).attrs['value']
+        return self._form.find('input', attrs={'name': 'portal'}).attrs['value']
 
     @property
     def op(self):
         """
         Campo op do formulário de Agência/Conta
         """
-        return self._form.find('input', attrs={'name': 'op'}).attrs['value']
+        return self._form.find('input', attrs={'name': 'tipoLogon'}).attrs['value']
 
 
 class FirstRouterPage:
