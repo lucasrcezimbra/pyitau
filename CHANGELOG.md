@@ -5,6 +5,7 @@ Changelog
 0.0.6 (2021-05-04)
 ------------
 - Fix access to the homepage that was changed [#102](https://github.com/Lrcezimbra/pyitau/issues/102)
+- Update requirements-dev
 
 
 0.0.5 (2019-07-05)
