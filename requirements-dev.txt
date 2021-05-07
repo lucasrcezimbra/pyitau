@@ -5,5 +5,5 @@ flake8==3.9.1
 pre-commit==2.9.3
 pytest==6.2.4
 pytest-cov==2.9.0
-pytest-mock==3.6.0
+pytest-mock==3.6.1
 responses==0.13.3
