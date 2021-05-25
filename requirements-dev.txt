@@ -1,6 +1,6 @@
 -e .
 
-coveralls==3.0.1
+coveralls==3.1.0
 flake8==3.9.1
 pre-commit==2.9.3
 pytest==6.2.4
