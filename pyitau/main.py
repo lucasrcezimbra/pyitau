@@ -7,7 +7,7 @@ from pyitau.pages import (FirstRouterPage, HomePage, PasswordPage,
                           SecondRouterPage)
 
 ITAU_URL = 'https://www.itau.com.br'
-ROUTER_URL = 'https://internetpf2.itau.com.br/router-app/router'
+ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
 
 class Itau:
