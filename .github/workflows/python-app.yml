@@ -30,7 +30,7 @@ jobs:
         pre-commit run -a
     - name: Test with pytest
       run: |
-        pytest
+        pytest --cov=pyitau
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
