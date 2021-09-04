@@ -35,6 +35,3 @@ How to use
 Contributing
 ````````````
 Contributions are welcome, feel free to open an Issue or Pull Request
-
-
-
