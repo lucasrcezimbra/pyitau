@@ -1,8 +1,10 @@
 -e .
 
-coveralls==1.8.2
-pytest==5.2.1
-pytest-cov==2.8.1
-pytest-mock==1.11.1
-responses==0.10.6
+coveralls==3.2.0
+flake8==3.9.2
+pre-commit==2.15.0
+pytest==6.2.5
+pytest-cov==2.12.1
+pytest-mock==3.6.1
+responses==0.13.4
 sphinx==2.1.2

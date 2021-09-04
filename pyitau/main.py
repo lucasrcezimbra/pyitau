@@ -3,9 +3,11 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+from pyitau.pages import (FirstRouterPage, HomePage, PasswordPage,
+                          SecondRouterPage)
 
 ITAU_URL = 'https://www.itau.com.br'
-ROUTER_URL = 'https://internetpf2.itau.com.br/router-app/router'
+ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
 
 class Itau:
@@ -76,10 +78,9 @@ class Itau:
 
     def _authenticate0(self):
         response = self._session.get(ITAU_URL)
-        soup = BeautifulSoup(response.text, features='html.parser')
-        form = soup.find('form', attrs={'name': 'banklineAgConta'})
-        self._id = form.find('input', attrs={'name': 'id'}).attrs['value']
-        self._op1 = form.find('input', attrs={'name': 'op'}).attrs['value']
+        page = HomePage(response.text)
+        self._id = page.id
+        self._op1 = page.op
 
     def _authenticate1(self):
         data = {
@@ -105,15 +106,13 @@ class Itau:
             'destino': '',
         }
         response = self._session.post(ROUTER_URL, data=data)
-
-        auth_token = re.search("authToken=\\'(.*?)\\';", response.text).group(1)
-        self._session.cookies.set('X-AUTH-TOKEN', auth_token)
-
-        self._op2 = re.search("\$SECAPDK.uidap\(\'(.*?)\'\);", response.text).group(1)
-        self._op3 = re.search("\$SECBCATCH.uidap\(\'(.*)\'\);", response.text).group(1)
-        self._op4 = re.search('router.performRequest\("(.*?)", ', response.text).group(1)
-        self._flow_id = re.search("var flowId=\'(.*)\';", response.text).group(1)
-        self._client_id = re.search("var clientId=\'(.*?)\';", response.text).group(1)
+        page = FirstRouterPage(response.text)
+        self._session.cookies.set('X-AUTH-TOKEN', page.auth_token)
+        self._op2 = page.secapdk
+        self._op3 = page.secbcatch
+        self._op4 = page.perform_request
+        self._flow_id = page.flow_id
+        self._client_id = page.client_id
 
     def _authenticate3(self):
         headers = {
@@ -133,12 +132,10 @@ class Itau:
     def _authenticate5(self):
         headers = {'op': self._op4}
         response = self._session.post(ROUTER_URL, headers=headers)
-        self._op5 = re.search('__opSignCommand = "(.*?)";', response.text).group(1)
-        self._op6 = re.search('__opMaquinaPirata = "(.*?)";', response.text).group(1)
-        self._op7 = re.search(
-            'var guardiao_cb = function\(\) {\n\t\t\tloadPage\(\'(.*?)\'\);',
-            response.text
-        ).group(1)
+        page = SecondRouterPage(response.text)
+        self._op5 = page.op_sign_command
+        self._op6 = page.op_maquina_pirata
+        self._op7 = page.guardiao_cb
 
     def _authenticate6(self):
         headers = {'op': self._op5}
@@ -151,24 +148,10 @@ class Itau:
     def _authenticate8(self):
         headers = {'op': self._op7}
         response = self._session.post(ROUTER_URL, headers=headers)
+        page = PasswordPage(response.text)
 
-        soup = BeautifulSoup(response.text, features='html.parser')
-
-        self._op8 = soup.find('input', id='op').attrs['value']
-
-        keys = soup.find(class_='teclado') \
-                   .find(class_='teclas') \
-                   .findAll(class_='campoTeclado')
-        password_mapper = {}
-        for key in keys:
-            numbers = key.attrs['aria-label'].split(' ou ')
-            letter = key.attrs['rel'][0].replace('tecla_', '')
-            password_mapper[numbers[0]] = letter
-            password_mapper[numbers[1]] = letter
-
-        self._letter_password = ''
-        for char in self.password:
-            self._letter_password += password_mapper[char]
+        self._op8 = page.op
+        self._letter_password = page.letter_password(self.password)
 
     def _authenticate9(self):
         headers = {'op': self._op8}
