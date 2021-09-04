@@ -1,7 +1,7 @@
 -e .
 
 coveralls==3.2.0
-flake8==3.9.1
+flake8==3.9.2
 pre-commit==2.9.3
 pytest==6.2.5
 pytest-cov==2.12.1
