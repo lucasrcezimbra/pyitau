@@ -30,4 +30,8 @@ jobs:
         pre-commit run -a
     - name: Test with pytest
       run: |
-        pytest
+        pytest --cov=pyitau
+    - name: Upload coverage data to coveralls.io
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
