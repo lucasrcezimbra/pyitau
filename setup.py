@@ -9,7 +9,7 @@ if __name__ == "__main__":
     setup(
         name='pyitau',
         description='Scraper to download data from Itaú Internet Banking',
-        version='1.0.0',
+        version='1.0.1',
         long_description=open(README).read(),
         author="Lucas Rangel Cezimbra",
         author_email="lucas.cezimbra@gmail.com",
