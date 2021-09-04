@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+- Adds pre-commit [#108](https://github.com/lucasrcezimbra/pyitau/issues/108)
+
+
 1.0.0 (2021-05-05)
 ------------
 - Refactor [#93](https://github.com/lucasrcezimbra/pyitau/issues/93) and first stable version

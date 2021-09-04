@@ -1,1 +1,1 @@
-from pyitau.main import Itau
+from pyitau.main import Itau  # noqa

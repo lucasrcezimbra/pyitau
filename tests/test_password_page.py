@@ -17,7 +17,10 @@ def test_init(response_authenticate8):
 def test_get_keys(page):
     keys = page._get_keys()
     assert len(keys) == 5
-    assert keys == page._soup.find(class_='teclado').find(class_='teclas').findAll(class_='campoTeclado')
+    assert keys == page._soup \
+        .find(class_='teclado') \
+        .find(class_='teclas') \
+        .findAll(class_='campoTeclado')
 
 
 def test_password_mapper(page):
@@ -25,11 +28,11 @@ def test_password_mapper(page):
         """
 <div class="teclado clearfix">
     <div class="teclas clearfix">
-        <a href="javascript:;" aria-label="1 ou 2" rel="tecla_L" class="tecla left campoTeclado" role="button" >1 ou 2</a>
-        <a href="javascript:;" aria-label="3 ou 4" rel="tecla_U" class="tecla left campoTeclado" role="button" >3 ou 4</a>
-        <a href="javascript:;" aria-label="5 ou 6" rel="tecla_C" class="tecla left campoTeclado" role="button" >5 ou 6</a>
-        <a href="javascript:;" aria-label="7 ou 8" rel="tecla_A" class="tecla left campoTeclado" role="button" >7 ou 8</a>
-        <a href="javascript:;" aria-label="9 ou 0" rel="tecla_S" class="tecla left campoTeclado" role="button" >9 ou 0</a>
+        <a aria-label="1 ou 2" rel="tecla_L" class="tecla left campoTeclado">1 ou 2</a>
+        <a aria-label="3 ou 4" rel="tecla_U" class="tecla left campoTeclado">3 ou 4</a>
+        <a aria-label="5 ou 6" rel="tecla_C" class="tecla left campoTeclado">5 ou 6</a>
+        <a aria-label="7 ou 8" rel="tecla_A" class="tecla left campoTeclado">7 ou 8</a>
+        <a aria-label="9 ou 0" rel="tecla_S" class="tecla left campoTeclado">9 ou 0</a>
     </div>
 </div>
         """
@@ -53,11 +56,11 @@ def test_letter_password(page):
         """
 <div class="teclado clearfix">
     <div class="teclas clearfix">
-        <a href="javascript:;" aria-label="1 ou 2" rel="tecla_L" class="tecla left campoTeclado" role="button" >1 ou 2</a>
-        <a href="javascript:;" aria-label="3 ou 4" rel="tecla_U" class="tecla left campoTeclado" role="button" >3 ou 4</a>
-        <a href="javascript:;" aria-label="5 ou 6" rel="tecla_C" class="tecla left campoTeclado" role="button" >5 ou 6</a>
-        <a href="javascript:;" aria-label="7 ou 8" rel="tecla_A" class="tecla left campoTeclado" role="button" >7 ou 8</a>
-        <a href="javascript:;" aria-label="9 ou 0" rel="tecla_S" class="tecla left campoTeclado" role="button" >9 ou 0</a>
+        <a aria-label="1 ou 2" rel="tecla_L" class="tecla left campoTeclado">1 ou 2</a>
+        <a aria-label="3 ou 4" rel="tecla_U" class="tecla left campoTeclado">3 ou 4</a>
+        <a aria-label="5 ou 6" rel="tecla_C" class="tecla left campoTeclado">5 ou 6</a>
+        <a aria-label="7 ou 8" rel="tecla_A" class="tecla left campoTeclado">7 ou 8</a>
+        <a aria-label="9 ou 0" rel="tecla_S" class="tecla left campoTeclado">9 ou 0</a>
     </div>
 </div>
         """
