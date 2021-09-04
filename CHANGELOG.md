@@ -4,6 +4,7 @@ Changelog
 
 (unreleased)
 ------------
+- Fix authentication error 'Connection reset by peer'
 - Adds pre-commit [#108](https://github.com/lucasrcezimbra/pyitau/issues/108)
 
 
