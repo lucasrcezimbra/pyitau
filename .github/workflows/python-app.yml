@@ -32,6 +32,6 @@ jobs:
       run: |
         pytest --cov=pyitau
     - name: Upload coverage data to coveralls.io
-      run: coveralls
+      run: coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
