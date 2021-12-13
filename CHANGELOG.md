@@ -5,6 +5,7 @@ Changelog
 1.0.2 (2021-12-13)
 ------------
 - Fix authentication error [#151](https://github.com/lucasrcezimbra/pyitau/issues/151)
+- Update dev requirements
 
 
 1.0.1 (2021-09-04)
