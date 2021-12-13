@@ -6,6 +6,7 @@ Changelog
 ------------
 - Fix authentication error [#151](https://github.com/lucasrcezimbra/pyitau/issues/151)
 - Update dev requirements
+- Fix CI
 
 
 1.0.1 (2021-09-04)
