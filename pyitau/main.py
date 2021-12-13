@@ -3,8 +3,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from pyitau.pages import (AuthenticatedHomePage, FirstRouterPage, PasswordPage,
-                          SecondRouterPage)
+from pyitau.pages import (AuthenticatedHomePage, FirstRouterPage, MenuPage,
+                          PasswordPage, SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -39,14 +39,11 @@ class Itau:
 
     def get_statements(self):
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-        response = self._session.post(ROUTER_URL, headers=headers)
-        op2 = re.search(
-            'urlBox : "(.*?)".*seletorContainer : "#boxContaCorrente",',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
 
-        response = self._session.post(ROUTER_URL, headers={'op': op2})
+        response = self._session.post(ROUTER_URL, headers=headers)
+        menu = MenuPage(response.text)
+
+        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
         op3 = re.search(
             'urlBox : "(.*?)".*seletorContainer : ".conteudoBoxContaCorrente",',
             response.text,

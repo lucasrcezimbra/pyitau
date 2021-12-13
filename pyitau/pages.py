@@ -123,3 +123,16 @@ class AuthenticatedHomePage:
     @property
     def op(self):
         return self._soup.find('div', class_='logo left').find('a').attrs['data-op']
+
+
+class MenuPage:
+    def __init__(self, response_text):
+        self._text = response_text
+
+    @property
+    def checking_account_op(self):
+        return re.search(
+            'urlBox : "(.*?)".*seletorContainer : "#boxContaCorrente",',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
