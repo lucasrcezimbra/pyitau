@@ -13,13 +13,6 @@ def itau():
 
 
 @pytest.fixture
-def response_authenticate0():
-    with open('./tests/responses/authenticate0.html') as file:
-        body = file.read()
-    return body
-
-
-@pytest.fixture
 def response_authenticate2():
     with open('./tests/responses/authenticate2.html') as file:
         body = file.read()

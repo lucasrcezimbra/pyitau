@@ -1,40 +1,6 @@
 import responses
 
-from pyitau.main import ITAU_URL, ROUTER_URL
-
-
-@responses.activate
-def test_authenticate0(itau, mocker, response_authenticate0):
-    responses.add(responses.GET, ITAU_URL, body=response_authenticate0)
-    get_spy = mocker.spy(itau._session, 'get')
-
-    itau._authenticate0()
-
-    get_spy.assert_called_once_with(ITAU_URL)
-    assert itau._id == 'PYITAU_ID_VALUE'
-    assert itau._op1 == 'PYITAU_OP1_VALUE'
-
-
-@responses.activate
-def test_authenticate1(itau, mocker):
-    url = 'https://bankline.itau.com.br/GRIPNET/bklcom.dll'
-    responses.add(responses.POST, url)
-    post_spy = mocker.spy(itau._session, 'post')
-    itau._id = 'PYITAU_ID_VALUE'
-    itau._op1 = 'PYITAU_OP1_VALUE'
-
-    itau._authenticate1()
-
-    expected_data = {
-        'id': 'PYITAU_ID_VALUE',
-        'op': 'PYITAU_OP1_VALUE',
-        'agencia': itau.agency,
-        'conta': itau.account,
-        'dac': itau.account_digit,
-        'tipousuario': 'X',
-        'origem': 'H'
-    }
-    post_spy.assert_called_once_with(url, data=expected_data)
+from pyitau.main import ROUTER_URL
 
 
 @responses.activate
