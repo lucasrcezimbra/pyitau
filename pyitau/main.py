@@ -3,10 +3,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from pyitau.pages import (FirstRouterPage, HomePage, PasswordPage,
-                          SecondRouterPage)
+from pyitau.pages import FirstRouterPage, PasswordPage, SecondRouterPage
 
-ITAU_URL = 'https://www.itau.com.br'
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
 
@@ -29,8 +27,6 @@ class Itau:
         }
 
     def authenticate(self):
-        self._authenticate0()
-        self._authenticate1()
         self._authenticate2()
         self._authenticate3()
         self._authenticate4()
@@ -75,25 +71,6 @@ class Itau:
         response = self._session.post(
             ROUTER_URL, data={'periodoConsulta': 90}, headers={'op': op5})
         return response.json()
-
-    def _authenticate0(self):
-        response = self._session.get(ITAU_URL)
-        page = HomePage(response.text)
-        self._id = page.id
-        self._op1 = page.op
-
-    def _authenticate1(self):
-        data = {
-            'id': self._id,
-            'op': self._op1,
-            'agencia': self.agency,
-            'conta': self.account,
-            'dac': self.account_digit,
-            'tipousuario': 'X',
-            'origem': 'H'
-        }
-        url = 'https://bankline.itau.com.br/GRIPNET/bklcom.dll'
-        self._session.post(url, data=data)
 
     def _authenticate2(self):
         data = {

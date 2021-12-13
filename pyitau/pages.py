@@ -3,36 +3,6 @@ import re
 from bs4 import BeautifulSoup
 
 
-class HomePage:
-    """
-    Página inicial do Itaú. Contém formulário com Agência e Conta.
-    Utilizada para extrair informações do formulário de login.
-    """
-    def __init__(self, response_text):
-        self._soup = BeautifulSoup(response_text, features='html.parser')
-
-    @property
-    def _form(self):
-        """
-        Formulário de login com os campos Agência e Conta
-        """
-        return self._soup.find('form', attrs={'name': 'banklineAgConta'})
-
-    @property
-    def id(self):
-        """
-        Campo id do formulário de Agência/Conta
-        """
-        return self._form.find('input', attrs={'name': 'portal'}).attrs['value']
-
-    @property
-    def op(self):
-        """
-        Campo op do formulário de Agência/Conta
-        """
-        return self._form.find('input', attrs={'name': 'tipoLogon'}).attrs['value']
-
-
 class FirstRouterPage:
     """
     Primeira página após enviar o formulário de Agência e Conta.
