@@ -3,7 +3,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from pyitau.pages import FirstRouterPage, PasswordPage, SecondRouterPage
+from pyitau.pages import (AuthenticatedHomePage, FirstRouterPage, PasswordPage,
+                          SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -37,9 +38,7 @@ class Itau:
         self._authenticate9()
 
     def get_statements(self):
-        op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
-
-        headers = {'op': op, 'segmento': 'VAREJO'}
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
         op2 = re.search(
             'urlBox : "(.*?)".*seletorContainer : "#boxContaCorrente",',
@@ -138,4 +137,4 @@ class Itau:
         }
 
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
-        self._home = BeautifulSoup(response.text, features='html.parser')
+        self._home = AuthenticatedHomePage(response.text)

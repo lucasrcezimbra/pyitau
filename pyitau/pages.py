@@ -111,3 +111,15 @@ class PasswordPage:
         """
         mapper = self._get_password_mapper()
         return ''.join(mapper[n] for n in password)
+
+
+class AuthenticatedHomePage:
+    """
+    Primeira página após o login
+    """
+    def __init__(self, response_text):
+        self._soup = BeautifulSoup(response_text, features='html.parser')
+
+    @property
+    def op(self):
+        return self._soup.find('div', class_='logo left').find('a').attrs['data-op']
