@@ -3,8 +3,9 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from pyitau.pages import (AuthenticatedHomePage, FirstRouterPage, MenuPage,
-                          PasswordPage, SecondRouterPage)
+from pyitau.pages import (AuthenticatedHomePage, CheckingAccountMenu,
+                          FirstRouterPage, MenuPage, PasswordPage,
+                          SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -44,13 +45,9 @@ class Itau:
         menu = MenuPage(response.text)
 
         response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
-        op3 = re.search(
-            'urlBox : "(.*?)".*seletorContainer : ".conteudoBoxContaCorrente",',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
+        account_menu = CheckingAccountMenu(response.text)
 
-        response = self._session.post(ROUTER_URL, headers={'op': op3})
+        response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
         soup = BeautifulSoup(response.text, features='html.parser')
         op4 = soup.find('a').attrs['data-op']
 

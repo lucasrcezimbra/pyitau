@@ -136,3 +136,16 @@ class MenuPage:
             self._text,
             flags=re.DOTALL,
         ).group(1)
+
+
+class CheckingAccountMenu:
+    def __init__(self, response_text):
+        self._text = response_text
+
+    @property
+    def statements_op(self):
+        return re.search(
+            'urlBox : "(.*?)".*seletorContainer : ".conteudoBoxContaCorrente",',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
