@@ -149,3 +149,12 @@ class CheckingAccountMenu:
             self._text,
             flags=re.DOTALL,
         ).group(1)
+
+
+class CheckingAccountStatementsPage:
+    def __init__(self, response_text):
+        self._soup = BeautifulSoup(response_text, features='html.parser')
+
+    @property
+    def full_statement_op(self):
+        return self._soup.find('a').attrs['data-op']

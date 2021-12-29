@@ -1,11 +1,10 @@
 import re
 
 import requests
-from bs4 import BeautifulSoup
 
 from pyitau.pages import (AuthenticatedHomePage, CheckingAccountMenu,
-                          FirstRouterPage, MenuPage, PasswordPage,
-                          SecondRouterPage)
+                          CheckingAccountStatementsPage, FirstRouterPage,
+                          MenuPage, PasswordPage, SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -48,10 +47,12 @@ class Itau:
         account_menu = CheckingAccountMenu(response.text)
 
         response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
-        soup = BeautifulSoup(response.text, features='html.parser')
-        op4 = soup.find('a').attrs['data-op']
+        statements_page = CheckingAccountStatementsPage(response.text)
 
-        response = self._session.post(ROUTER_URL, headers={'op': op4})
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': statements_page.full_statement_op},
+        )
         pattern = 'function consultarLancamentosPorPeriodo.*' \
                   '"periodoConsulta" : parametrosPeriodo.*' \
                   'url = "(.*?)";'
