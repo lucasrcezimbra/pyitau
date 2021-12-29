@@ -3,15 +3,23 @@ import re
 from bs4 import BeautifulSoup
 
 
-class FirstRouterPage:
+class TextPage:
+    def __init__(self, response_text):
+        self._text = response_text
+
+
+class SoupPage(TextPage):
+    def __init__(self, response_text):
+        super().__init__(response_text)
+        self._soup = BeautifulSoup(self._text, features='html.parser')
+
+
+class FirstRouterPage(TextPage):
     """
     Primeira página após enviar o formulário de Agência e Conta.
     Utilizada para extrair do HTML informações que serão necessárias nas
     próximas requisições.
     """
-    def __init__(self, response_text):
-        self._text = response_text
-
     @property
     def auth_token(self):
         """
@@ -40,15 +48,12 @@ class FirstRouterPage:
         return re.search(r'router.performRequest\("(.*?)", ', self._text).group(1)
 
 
-class SecondRouterPage:
+class SecondRouterPage(TextPage):
     """
     Segunda página após enviar o formulário de Agência e Conta.
     Também utilizada para extrair do HTML informações que serão necessárias nas
     próximas requisições.
     """
-    def __init__(self, response_text):
-        self._text = response_text
-
     @property
     def op_sign_command(self):
         return re.search('__opSignCommand = "(.*?)";', self._text).group(1)
@@ -65,15 +70,12 @@ class SecondRouterPage:
         ).group(1)
 
 
-class PasswordPage:
+class PasswordPage(SoupPage):
     """
     Página do teclado da senha. Contém 2 dígitos por botão.
     Por baixo dos panos cada botão representa uma letra.
     A combinação das letras deve ser enviada na próxima requisição.
     """
-    def __init__(self, response_text):
-        self._soup = BeautifulSoup(response_text, features='html.parser')
-
     @property
     def op(self):
         """
@@ -113,22 +115,16 @@ class PasswordPage:
         return ''.join(mapper[n] for n in password)
 
 
-class AuthenticatedHomePage:
+class AuthenticatedHomePage(SoupPage):
     """
     Primeira página após o login
     """
-    def __init__(self, response_text):
-        self._soup = BeautifulSoup(response_text, features='html.parser')
-
     @property
     def op(self):
         return self._soup.find('div', class_='logo left').find('a').attrs['data-op']
 
 
-class MenuPage:
-    def __init__(self, response_text):
-        self._text = response_text
-
+class MenuPage(TextPage):
     @property
     def checking_account_op(self):
         return re.search(
@@ -138,10 +134,7 @@ class MenuPage:
         ).group(1)
 
 
-class CheckingAccountMenu:
-    def __init__(self, response_text):
-        self._text = response_text
-
+class CheckingAccountMenu(TextPage):
     @property
     def statements_op(self):
         return re.search(
@@ -151,10 +144,7 @@ class CheckingAccountMenu:
         ).group(1)
 
 
-class CheckingAccountStatementsPage:
-    def __init__(self, response_text):
-        self._soup = BeautifulSoup(response_text, features='html.parser')
-
+class CheckingAccountStatementsPage(SoupPage):
     @property
     def full_statement_op(self):
         return self._soup.find('a').attrs['data-op']
