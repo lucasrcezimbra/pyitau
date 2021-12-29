@@ -31,3 +31,10 @@ def response_authenticate8():
     with open('./tests/responses/authenticate8.html') as file:
         body = file.read()
     return body
+
+
+@pytest.fixture
+def response_menu():
+    with open('./tests/responses/menu.html') as file:
+        body = file.read()
+    return body
