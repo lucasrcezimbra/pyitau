@@ -1,10 +1,9 @@
-import re
-
 import requests
 
-from pyitau.pages import (AuthenticatedHomePage, CheckingAccountMenu,
-                          CheckingAccountStatementsPage, FirstRouterPage,
-                          MenuPage, PasswordPage, SecondRouterPage)
+from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
+                          CheckingAccountMenu, CheckingAccountStatementsPage,
+                          FirstRouterPage, MenuPage, PasswordPage,
+                          SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -53,17 +52,13 @@ class Itau:
             ROUTER_URL,
             headers={'op': statements_page.full_statement_op},
         )
-        pattern = 'function consultarLancamentosPorPeriodo.*' \
-                  '"periodoConsulta" : parametrosPeriodo.*' \
-                  'url = "(.*?)";'
-        op5 = re.search(
-            pattern,
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
+        full_statement_page = CheckingAccountFullStatement(response.text)
 
         response = self._session.post(
-            ROUTER_URL, data={'periodoConsulta': 90}, headers={'op': op5})
+            ROUTER_URL,
+            data={'periodoConsulta': 90},
+            headers={'op': full_statement_page.filter_statements_op},
+        )
         return response.json()
 
     def _authenticate2(self):

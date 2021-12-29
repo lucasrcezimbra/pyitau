@@ -148,3 +148,12 @@ class CheckingAccountStatementsPage(SoupPage):
     @property
     def full_statement_op(self):
         return self._soup.find('a').attrs['data-op']
+
+
+class CheckingAccountFullStatement(TextPage):
+    @property
+    def filter_statements_op(self):
+        pattern = 'function consultarLancamentosPorPeriodo.*' \
+                  '"periodoConsulta" : parametrosPeriodo.*' \
+                  'url = "(.*?)";'
+        return re.search(pattern, self._text, flags=re.DOTALL).group(1)
