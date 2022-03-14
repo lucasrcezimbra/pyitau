@@ -29,15 +29,16 @@ class FirstRouterPage:
 
     @property
     def secapdk(self):
-        return re.search(r"\$SECAPDK.uidap\(\'(.*?)\'\);", self._text).group(1)
+        return re.search(r"\$SECAPDK[\n\r\t\s]*.uidap\(\'(.*?)\'\);", self._text).group(1)
 
     @property
     def secbcatch(self):
-        return re.search(r"\$SECBCATCH.uidap\(\'(.*)\'\);", self._text).group(1)
+        return re.search(r"\$SECBCATCH[\n\r\t\s]*.uidap\(\'(.*)\'\);", self._text).group(1)
 
     @property
     def perform_request(self):
-        return re.search(r'router.performRequest\("(.*?)", ', self._text).group(1)
+        return re.search(r'router[\n\r\t\s]*'
+                         r'.performRequest\([\n\r\t\s]*"(.*?)",', self._text).group(1)
 
 
 class SecondRouterPage:

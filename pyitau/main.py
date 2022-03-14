@@ -36,6 +36,44 @@ class Itau:
         self._authenticate8()
         self._authenticate9()
 
+    def get_credit_card_invoice(self):
+        op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
+
+        headers = {'op': op, 'segmento': 'VAREJO'}
+        response = self._session.post(ROUTER_URL, headers=headers)
+        op2 = re.search(
+            r'urlBox : "([^"]+)"[\n\t\r\s,]*seletorContainer : "#boxCartoes",',
+            response.text,
+            flags=re.DOTALL,
+        ).group(1)
+        print('op2', op2)
+
+        response = self._session.post(ROUTER_URL, headers={'op': op2})
+
+        op3 = re.search(
+            r'urlBox : \'([^\']+)\'[\n\r\t\s,]*seletorContainer : "\.conteudoBoxCartoes",',
+            response.text,
+            flags=re.DOTALL,
+        ).group(1)
+        response = self._session.post(ROUTER_URL, headers={'op': op3})
+        cartoes_page = BeautifulSoup(response.text, features='html.parser')
+        form_ver_fatura = cartoes_page.find('form', id='formVerFaturaRedesenho')
+        op4 = form_ver_fatura.find('input', {'name': 'op'}).attrs['data-op']
+        id_cartao = form_ver_fatura.find('input', {'name': 'idCartao'}).attrs['value']
+        response = self._session.post(ROUTER_URL, headers={'op': op4},
+                                      data={'idCartao': id_cartao})
+
+        op5 = re.search(
+            r'if \(habilitaFaturaCotacaoDolar === "true"\) '
+            r'{[\n\t\r\s]+urlContingencia = "([^"]+)"',
+            response.text,
+            flags=re.DOTALL,
+        ).group(1)
+        response = self._session.post(ROUTER_URL, headers={'op': op5},
+                                      data={'secao': 'Cartoes:MinhaFatura',
+                                            'item': ''})
+        return response.json()
+
     def get_statements(self):
         op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
 
