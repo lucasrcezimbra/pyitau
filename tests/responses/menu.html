@@ -1,0 +1,92 @@
+var boxHome = [
+		
+			
+				{
+		 			urlBox : "PYITAU_OP_ContaCorrente",
+		 			seletorContainer : "#boxContaCorrente",
+		 			isAberto : ( verificarSituacaoBoxAberto("boxContaCorrente") && 'false' == 'false' ) || ( verificaSituacaoBoxApp() && 'false' == 'true'),
+		 			timeout: 90000,
+		 			onComplete: function(){
+		 				_orquestradorLightBox.atualizar('contacorrente');
+		 			}
+		 		},
+			
+			
+		
+ 		{
+ 			urlBox : "PYITAU_OP_Pagamentos",
+ 			seletorContainer : "#boxPagamentos",
+ 			data: {
+ 				linkLeitorCelular: false
+ 			}
+ 		},
+ 		{
+ 			urlBox : "PYITAU_OP_Transferencias",
+ 			seletorContainer : "#boxTransferencias"
+		 },
+		{
+ 			urlBox : "PYITAU_OP_Pix",
+ 			seletorContainer : "#boxPix"
+ 		},
+ 		{
+ 			urlBox : "PYITAU_OP_OpenBanking",
+ 			seletorContainer : "#boxOpenBanking"
+ 		},
+ 		{
+ 			urlBox : "PYITAU_OP_Credito",
+ 			seletorContainer : "#boxCredito"
+ 		},
+ 			
+ 		{
+ 			urlBox : "PYITAU_OP_Central",
+ 			seletorContainer : "#boxCentral",
+			showLoader : false,
+			tratarError: false,
+			onComplete: function(){
+ 				_orquestradorLightBox.atualizar('centraltarefas');
+ 			}
+			
+ 		},
+ 		{
+ 			urlBox : "PYITAU_OP_MeuBanner",
+ 			seletorContainer : "#boxMeuBanner",
+			showLoader : false,
+			tratarError: false
+ 		},
+ 		{
+ 			urlBox : "PYITAU_OP_Cartoes",
+ 			seletorContainer : "#boxCartoes",
+ 			isAberto : false,
+ 			tratarError: false
+ 		}, 
+ 		/* 
+ 		{
+ 			urlBox : "PYITAU_OP_Recarga",
+ 			seletorContainer : "#boxRecarga"
+ 		},*/
+	 	
+	 		{
+				urlBox : "PYITAU_OP_Documentos",
+	
+				seletorContainer : "#boxDocumentos",
+				onComplete: function(){
+					carregaDataLayerHome();
+	 				_orquestradorLightBox.atualizar('documentos');
+				}
+			},
+		
+	 		
+				
+			{
+				urlBox : "PYITAU_OP_HomeCarrinhoPF",
+				seletorContainer : "#boxHomeCarrinhoPF",
+				tratarError: false,
+				data: {
+					isHome: true,
+					localExibicao : 'HOME_PF'			
+				}
+			},
+		
+		
+		{ }
+ 	];

@@ -1,9 +1,9 @@
-import re
-
 import requests
-from bs4 import BeautifulSoup
 
-from pyitau.pages import FirstRouterPage, PasswordPage, SecondRouterPage
+from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
+                          CheckingAccountMenu, CheckingAccountStatementsPage,
+                          FirstRouterPage, MenuPage, PasswordPage,
+                          SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -75,39 +75,28 @@ class Itau:
         return response.json()
 
     def get_statements(self):
-        op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
 
-        headers = {'op': op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
-        op2 = re.search(
-            'urlBox : "(.*?)".*seletorContainer : "#boxContaCorrente",',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
+        menu = MenuPage(response.text)
 
-        response = self._session.post(ROUTER_URL, headers={'op': op2})
-        op3 = re.search(
-            'urlBox : "(.*?)".*seletorContainer : ".conteudoBoxContaCorrente",',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
+        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
+        account_menu = CheckingAccountMenu(response.text)
 
-        response = self._session.post(ROUTER_URL, headers={'op': op3})
-        soup = BeautifulSoup(response.text, features='html.parser')
-        op4 = soup.find('a').attrs['data-op']
-
-        response = self._session.post(ROUTER_URL, headers={'op': op4})
-        pattern = 'function consultarLancamentosPorPeriodo.*' \
-                  '"periodoConsulta" : parametrosPeriodo.*' \
-                  'url = "(.*?)";'
-        op5 = re.search(
-            pattern,
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
+        response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
+        statements_page = CheckingAccountStatementsPage(response.text)
 
         response = self._session.post(
-            ROUTER_URL, data={'periodoConsulta': 90}, headers={'op': op5})
+            ROUTER_URL,
+            headers={'op': statements_page.full_statement_op},
+        )
+        full_statement_page = CheckingAccountFullStatement(response.text)
+
+        response = self._session.post(
+            ROUTER_URL,
+            data={'periodoConsulta': 90},
+            headers={'op': full_statement_page.filter_statements_op},
+        )
         return response.json()
 
     def _authenticate2(self):
@@ -176,4 +165,4 @@ class Itau:
         }
 
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
-        self._home = BeautifulSoup(response.text, features='html.parser')
+        self._home = AuthenticatedHomePage(response.text)
