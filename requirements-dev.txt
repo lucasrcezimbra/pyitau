@@ -6,5 +6,5 @@ pre-commit==2.16.0
 pytest==6.2.5
 pytest-cov==3.0.0
 pytest-mock==3.6.1
-responses==0.16.0
+responses==0.20.0
 sphinx==4.3.2
