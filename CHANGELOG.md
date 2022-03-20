@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+1.0.3 (2022-03-19)
+------------
+- Fix authentication. Thanks to [@joaoalvarenga](https://github.com/joaoalvarenga)
+- Refactor get_statements [#107](https://github.com/lucasrcezimbra/pyitau/issues/107)
+- Update dev requirements
+
+
 1.0.2 (2021-12-13)
 ------------
 - Fix authentication error [#151](https://github.com/lucasrcezimbra/pyitau/issues/151)
