@@ -113,7 +113,10 @@
 	
 	<script>
 		function carregarConteudoCentral() {
-			router.performRequest("PYITAU_OP4", 'divConteudoCentral');
+			router
+					.performRequest(
+							"PYITAU_OP4",
+							'divConteudoCentral');
 		}
 	</script>
 	<script>
@@ -123,11 +126,15 @@
 				$("html").removeClass("uiConfiguration-runed");
 				uiConfiguration.configure();
 				ItauJs.Exception();
-				
-				$SECAPDK.uidap('PYITAU_OP2');
-			
-				$SECBCATCH.uidap('PYITAU_OP3');
-				
+
+				$SECAPDK
+						.uidap('PYITAU_OP2');
+
+				$SECBCATCH
+						.uidap('PYITAU_OP3');
+
+				$SECTMX
+						.uidap('SECTMX');
 			}catch(e){};
 			try{
 				carregarConteudoCentral();
