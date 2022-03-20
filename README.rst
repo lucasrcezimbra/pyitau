@@ -34,12 +34,15 @@ How to Use
 
 Contributing
 ~~~~~~~~~~~~~
-Contributions are welcome, feel free to open an Issue or Pull Request
+Contributions are welcome, feel free to open an Issue or Pull Request.
+
+Pull requests must be for the `develop` branch.
 
 .. code-block:: bash
 
     git clone https://github.com/lucasrcezimbra/pyitau
     cd pyitau
+    git checkout develop
     python -m venv .venv
     pip install -r requirements-dev.txt
     pre-commit install
