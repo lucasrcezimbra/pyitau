@@ -1,0 +1,42 @@
+<script>
+	function consultarLancamentosPorPeriodo(parametrosPeriodo,
+			opcaoSelecionadaPeriodo) {
+		var parametros = {};
+		var url;
+
+		$('#extrato-grid-lancamentos, #extrato-grid-lancamentos-futuros-entrada, #extrato-grid-lancamentos-futuros-saida').empty();
+		$('#extrato-btn-ver-mais-lancamentos').empty();
+
+		if (filtro.periodoConsulta !== parametrosPeriodo) {
+
+			if (opcaoSelecionadaPeriodo === "mesCompleto") {
+				parametros = {
+					"mesCompleto" : parametrosPeriodo
+				};
+				filtro.mesCompleto = parametrosPeriodo;
+				filtro.periodoConsulta = null;
+				url = "RANDOM_STRING=;";
+
+			} else {
+
+				filtro.mesCompleto = null;
+				filtro.periodoConsulta = parametrosPeriodo;
+
+				// $('#extrato-grid-lancamentos-futuros').empty();
+				$('#extrato-btn-ver-mais-lancamentos-futuros').empty();
+
+				$('#extrato-grid-outros-lancamentos').empty();
+
+				parametros = {
+					"periodoConsulta" : parametrosPeriodo
+				};
+				url = "PYITAU_OP_filter_statements=;";
+				
+				armazenaValoresFiltro("periodoVisualizacao", filtroLancamentos.filtroSelecionado().periodoConsulta);
+			}
+			adobeFiltroPeriodoExtrato(filtro, true);
+		}
+		checkCookieSalvarFiltros() && setCookies("filtro_periodo_" + iDPF, filtroLancamentos.filtroSelecionado().periodoConsulta);
+		filtraExtrato(parametros, url);
+	}
+</script>
