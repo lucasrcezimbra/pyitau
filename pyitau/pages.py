@@ -45,8 +45,8 @@ class FirstRouterPage(TextPage):
 
     @property
     def perform_request(self):
-        return re.search(r'router[\n\r\t\s]*'
-                         r'.performRequest\([\n\r\t\s]*"(.*?)",', self._text).group(1)
+        pattern = r'router[\n\r\t\s]*.performRequest\([\n\r\t\s]*"(.*?)",'
+        return re.search(pattern, self._text).group(1)
 
 
 class SecondRouterPage(TextPage):
