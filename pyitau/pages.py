@@ -134,6 +134,14 @@ class MenuPage(TextPage):
             flags=re.DOTALL,
         ).group(1)
 
+    @property
+    def checking_cards_op(self):
+        return re.search(
+            r'urlBox : "([^"]+)"[\n\t\r\s,]*seletorContainer : "#boxCartoes",',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
+
 
 class CheckingAccountMenu(TextPage):
     @property
@@ -145,10 +153,32 @@ class CheckingAccountMenu(TextPage):
         ).group(1)
 
 
+class CheckingCardsMenu(TextPage):
+    @property
+    def cards_op(self):
+        return re.search(
+            r'urlBox : \'([^\']+)\'[\n\r\t\s,]*seletorContainer : "\.conteudoBoxCartoes",',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
+
+
 class CheckingAccountStatementsPage(SoupPage):
     @property
     def full_statement_op(self):
         return self._soup.find('a').attrs['data-op']
+
+
+class CardsPage(SoupPage):
+    @property
+    def card_details_op(self):
+        form_invoice = self._soup.find('form', id='formVerFaturaRedesenho')
+        return form_invoice.find('input', {'name': 'op'}).attrs['data-op']
+
+    @property
+    def first_card_id(self):
+        form_invoice = self._soup.find('form', id='formVerFaturaRedesenho')
+        return form_invoice.find('input', {'name': 'idCartao'}).attrs['value']
 
 
 class CheckingAccountFullStatement(TextPage):
@@ -158,3 +188,14 @@ class CheckingAccountFullStatement(TextPage):
                   '"periodoConsulta" : parametrosPeriodo.*' \
                   'url = "(.*?)";'
         return re.search(pattern, self._text, flags=re.DOTALL).group(1)
+
+
+class CardDetails(TextPage):
+    @property
+    def full_invoice_op(self):
+        return re.search(
+            r'if \(habilitaFaturaCotacaoDolar === "true"\) '
+            r'{[\n\t\r\s]+urlContingencia = "([^"]+)"',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)

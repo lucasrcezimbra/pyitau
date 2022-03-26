@@ -1,7 +1,8 @@
 import requests
 
-from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
-                          CheckingAccountMenu, CheckingAccountStatementsPage,
+from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
+                          CheckingAccountFullStatement, CheckingAccountMenu,
+                          CheckingAccountStatementsPage, CheckingCardsMenu,
                           FirstRouterPage, MenuPage, PasswordPage,
                           SecondRouterPage)
 
@@ -37,39 +38,22 @@ class Itau:
         self._authenticate9()
 
     def get_credit_card_invoice(self):
-        op = self._home.find('div', class_='logo left').find('a').attrs['data-op']
-
-        headers = {'op': op, 'segmento': 'VAREJO'}
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
-        op2 = re.search(
-            r'urlBox : "([^"]+)"[\n\t\r\s,]*seletorContainer : "#boxCartoes",',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
-        print('op2', op2)
+        menu = MenuPage(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_cards_op})
 
-        response = self._session.post(ROUTER_URL, headers={'op': op2})
+        cards_menu = CheckingCardsMenu(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
 
-        op3 = re.search(
-            r'urlBox : \'([^\']+)\'[\n\r\t\s,]*seletorContainer : "\.conteudoBoxCartoes",',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
-        response = self._session.post(ROUTER_URL, headers={'op': op3})
-        cartoes_page = BeautifulSoup(response.text, features='html.parser')
-        form_ver_fatura = cartoes_page.find('form', id='formVerFaturaRedesenho')
-        op4 = form_ver_fatura.find('input', {'name': 'op'}).attrs['data-op']
-        id_cartao = form_ver_fatura.find('input', {'name': 'idCartao'}).attrs['value']
-        response = self._session.post(ROUTER_URL, headers={'op': op4},
-                                      data={'idCartao': id_cartao})
+        cards_page = CardsPage(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': cards_page.card_details_op},
+                                      data={'idCartao': cards_page.first_card_id})
 
-        op5 = re.search(
-            r'if \(habilitaFaturaCotacaoDolar === "true"\) '
-            r'{[\n\t\r\s]+urlContingencia = "([^"]+)"',
-            response.text,
-            flags=re.DOTALL,
-        ).group(1)
-        response = self._session.post(ROUTER_URL, headers={'op': op5},
+        with open('card_details.html', 'w') as f:
+            f.write(response.text)
+        card_details = CardDetails(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': card_details.full_invoice_op},
                                       data={'secao': 'Cartoes:MinhaFatura',
                                             'item': ''})
         return response.json()
