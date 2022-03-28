@@ -50,8 +50,6 @@ class Itau:
         response = self._session.post(ROUTER_URL, headers={'op': cards_page.card_details_op},
                                       data={'idCartao': cards_page.first_card_id})
 
-        with open('card_details.html', 'w') as f:
-            f.write(response.text)
         card_details = CardDetails(response.text)
         response = self._session.post(ROUTER_URL, headers={'op': card_details.full_invoice_op},
                                       data={'secao': 'Cartoes:MinhaFatura',
