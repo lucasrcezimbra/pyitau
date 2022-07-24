@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+- Change from pyup to dependabot
+
+
 1.0.3 (2022-03-19)
 ------------
 - Fix authentication. Thanks to [@joaoalvarenga](https://github.com/joaoalvarenga)

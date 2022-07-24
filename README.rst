@@ -47,8 +47,3 @@ Pull requests must be for the `develop` branch.
     pip install -r requirements-dev.txt
     pre-commit install
     pytest
-
-
-~~~~~~~~~~~~~
-
-[ ~ Dependencies scanned by PyUp.io ~ ]
