@@ -7,9 +7,6 @@ pyitau
 .. image:: https://coveralls.io/repos/github/lucasrcezimbra/pyitau/badge.svg?branch=master
     :target: https://coveralls.io/github/lucasrcezimbra/pyitau?branch=master
     :alt: Coverage
-.. image:: https://pyup.io/repos/github/lucasrcezimbra/pyitau/shield.svg
-    :target: https://pyup.io/repos/github/lucasrcezimbra/pyitau/
-    :alt: Updates
 
 Unofficial client to access your Itaú bank data
 
