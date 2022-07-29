@@ -6,7 +6,7 @@ Welcome to pyitau's documentation!
    :caption: Contents:
 
    readme
-   modules
+   api
    history
 
 Indices and tables
