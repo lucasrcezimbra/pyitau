@@ -2,10 +2,13 @@ Changelog
 =========
 
 
-(unreleased)
-------------
+1.1.0 (2022-07-31)
+-----------------
+- Add credit card support _`#171`. Thanks to `@joaoalvarenga`_
 - Add ReadTheDocs
 - Change from pyup to dependabot
+
+.. _`#171`: https://github.com/lucasrcezimbra/pyitau/issues/171
 
 
 1.0.3 (2022-03-19)
