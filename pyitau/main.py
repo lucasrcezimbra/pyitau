@@ -38,7 +38,7 @@ class Itau:
 
     def get_credit_card_invoice(self):
         """
-        Get and return the credit card incoive.
+        Get and return the credit card invoice.
         """
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
