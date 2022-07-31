@@ -3,8 +3,8 @@ Changelog
 
 
 1.1.0 (2022-07-31)
------------------
-- Add credit card support _`#171`. Thanks to `@joaoalvarenga`_
+------------------
+- Add credit card support `#171`_. Thanks to `@joaoalvarenga`_
 - Add ReadTheDocs
 - Change from pyup to dependabot
 
