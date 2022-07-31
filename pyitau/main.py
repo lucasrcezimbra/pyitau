@@ -1,7 +1,8 @@
 import requests
 
-from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
-                          CheckingAccountMenu, CheckingAccountStatementsPage,
+from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
+                          CheckingAccountFullStatement, CheckingAccountMenu,
+                          CheckingAccountStatementsPage, CheckingCardsMenu,
                           FirstRouterPage, MenuPage, PasswordPage,
                           SecondRouterPage)
 
@@ -9,12 +10,6 @@ ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
 
 class Itau:
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-                      '(KHTML, like Gecko) Ubuntu Chromium/72.0.3626.121 '
-                      'Chrome/72.0.3626.121 Safari/537.36'
-    }
-
     def __init__(self, agency, account, account_digit, password):
         self.agency = agency
         self.account = account
@@ -23,7 +18,11 @@ class Itau:
         self._session = requests.Session()
         self._session.headers = {
             **self._session.headers,
-            **self.headers,
+            'User-Agent': (
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+                '(KHTML, like Gecko) Ubuntu Chromium/72.0.3626.121 '
+                'Chrome/72.0.3626.121 Safari/537.36'
+            ),
         }
 
     def authenticate(self):
@@ -36,7 +35,32 @@ class Itau:
         self._authenticate8()
         self._authenticate9()
 
-    def get_statements(self):
+    def get_credit_card_invoice(self):
+        """
+        Get and return the credit card invoice.
+        """
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
+        response = self._session.post(ROUTER_URL, headers=headers)
+        menu = MenuPage(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_cards_op})
+
+        cards_menu = CheckingCardsMenu(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
+
+        cards_page = CardsPage(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': cards_page.card_details_op},
+                                      data={'idCartao': cards_page.first_card_id})
+
+        card_details = CardDetails(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': card_details.full_invoice_op},
+                                      data={'secao': 'Cartoes:MinhaFatura',
+                                            'item': ''})
+        return response.json()
+
+    def get_statements(self, days=90):
+        """
+        Get and return the statements of the last days.
+        """
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
 
         response = self._session.post(ROUTER_URL, headers=headers)
@@ -56,7 +80,7 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            data={'periodoConsulta': 90},
+            data={'periodoConsulta': days},
             headers={'op': full_statement_page.filter_statements_op},
         )
         return response.json()

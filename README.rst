@@ -1,22 +1,30 @@
+======
 pyitau
-============
+======
 
 .. image:: https://badge.fury.io/py/pyitau.svg
     :target: https://badge.fury.io/py/pyitau
     :alt: PyPI
+
 .. image:: https://coveralls.io/repos/github/lucasrcezimbra/pyitau/badge.svg?branch=master
     :target: https://coveralls.io/github/lucasrcezimbra/pyitau?branch=master
     :alt: Coverage
-.. image:: https://pyup.io/repos/github/lucasrcezimbra/pyitau/shield.svg
-    :target: https://pyup.io/repos/github/lucasrcezimbra/pyitau/
-    :alt: Updates
+
+.. image:: https://readthedocs.org/projects/pyitau/badge/?version=latest
+        :target: https://pyitau.readthedocs.io/en/latest/?version=latest
+        :alt: Documentation Status
+
 
 Unofficial client to access your Itaú bank data
+
+* Documentation: https://pyitau.readthedocs.io.
 
 
 Installation
 ~~~~~~~~~~~~~
-``pip install pyitau``
+.. code-block:: shell
+
+    pip install pyitau
 
 
 How to Use
@@ -47,8 +55,3 @@ Pull requests must be for the `develop` branch.
     pip install -r requirements-dev.txt
     pre-commit install
     pytest
-
-
-~~~~~~~~~~~~~
-
-[ ~ Dependencies scanned by PyUp.io ~ ]
