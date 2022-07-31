@@ -1,0 +1,65 @@
+<div class="conteudo">
+    <form id="formVerFaturaRedesenho" method="post" action="#">
+        <input type="hidden" name="idCartao" value="PYITAU_CARD_ID">
+        <input type="hidden" name="op" data-op='PYITAU_FATURA_REDESENHO_OP' />
+    </form>
+    <form id="formPaginaCategoria" method="post" action="#">
+        <input type="hidden" name="op" data-op='PYITAU_PAGINA_CATEGORIA_OP' />
+    </form>
+    <table class="tabela-zebra no-margem-baixo">
+        <thead>
+            <tr>
+                <th class="txt-no-transform txt-center">cart&atilde;o</th>
+                <th class="txt-no-transform txt-center">vencimento</th>
+                <th class="txt-no-transform txt-center">valor (R$)</th>
+                <th class="txt-no-transform txt-center">fatura</th>
+            </tr>
+        </thead>
+        <tbody>
+
+                <tr class="txt-v-align-middle">
+                    <td>
+                        <div class="clearfix">
+                            <img width="40" height="26" class="left margem-direita10" alt="" src="https://estatico.itau.com.br/ibanking/commons/img/cartonista/CartaoCredito/01572_000.jpg">
+                            <div>
+                                <p>
+
+
+                                            <a title="ver fatura cart&atilde;o" href="javascript:verFaturaRedesenho('PYITAU')" onclick="enviarTagueamentoVerFatura();">
+                                                PyItau Card<strong> - final 0000</strong>
+                                            </a>
+
+
+
+                                </p>
+                                <p>
+
+
+
+                                            Limite dispon&iacute;vel: <strong> R$ 99.999,99</strong>
+
+
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="largura-fixa70">
+                        <div>
+                            <p class="txt-center">00/00/0000</p>
+                        </div>
+                    </td>
+                    <td>
+                        <p class="txt-center">
+                            <strong><span class="txt16">99.999,</span>99</strong>
+                        </p>
+                    </td>
+                    <td class="largura-fixa70">
+                        <p class="txt-center">aberta</p>
+                    </td>
+                </tr>
+
+        </tbody>
+    </table>
+
+
+</div>

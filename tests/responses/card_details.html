@@ -1,0 +1,77 @@
+<script>
+  self.init = function() {
+			var habilitaFaturaCotacaoDolar = "true";
+
+	    	var urlContingencia = "PYITAU_URL_CONTINGENCIA_OP";
+
+            if (habilitaFaturaCotacaoDolar === "true") {
+            	urlContingencia = "PYITAU_URL_CONTIGENCIA_DOLAR_OP";
+            }
+
+	    	var params = {
+    			type : "POST",
+    			async : true,
+    			url: urlContingencia,
+	    		dataType: "json",
+	    		data: {
+		    			'secao': 'Cartoes:MinhaFatura',
+		    			'item': ''
+		    		},
+	    		headers: {
+	    			ajaxRequest : true,
+	    			scrollToTop : false,
+	                'Content-Type': 'application/x-www-form-urlencoded'
+	    		}
+	    	};
+
+	    	var populaCartao = function(data) {
+				var listaCartao = [];
+    			for( var i = 0; i < data.length; i++ ) {
+    				var objeto = data[i];
+
+    				if( objeto.customizacao != null ) {
+
+    					var cartao = self.montarCartao(objeto);
+    					if(i == self.indexCartaoInicial){
+    						cartao = self.popularDadosCompletos(objeto, cartao);
+    					}
+	    				listaCartao.push(cartao);
+    				}
+    			}
+    			self.cartoes = listaCartao;
+    			if(self.segmento !== "PRIVATE") {
+					self.cartoes.push({
+						"custom": "cartao--clean",
+						"titulo": "solicitar novo cart&atilde;o"
+					});
+    			}
+				self.qtdCartoes = self.cartoes.length;
+    			$scope.$apply();
+	    	}
+
+	    	var initModal = function(){
+	    		$("#modal-debito-automatico").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    		$("#modal-nao-gerido").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    		$("#modal-programa-pontos").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    		$("#modal-nao-cadastrado").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    		$("#modal-nao-elegivel").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    		$("#modal-pontos-indisponivel").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    		$("#modal-detalhes-saldo").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
+	    	}
+
+	    	$.ajax(params)
+	    	.success(function(response) {
+	    		self.adobe = response.object.adobe;
+	    		self.likertObj = {
+	    	            'key': 'likert_fatura_pyitau',
+	    	            'value': self.adobe.visitor.iDPF
+	    	        }
+
+    			populaCartao(response.object.data);
+    			initModal();
+	    	})
+	    	.error(function(response) {
+    			console.log(response);
+	    	});
+	    }
+</script>
