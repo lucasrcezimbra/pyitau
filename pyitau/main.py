@@ -1,7 +1,8 @@
 import requests
 
-from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
-                          CheckingAccountMenu, CheckingAccountStatementsPage,
+from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
+                          CheckingAccountFullStatement, CheckingAccountMenu,
+                          CheckingAccountStatementsPage, CheckingCardsMenu,
                           FirstRouterPage, MenuPage, PasswordPage,
                           SecondRouterPage)
 
@@ -35,6 +36,25 @@ class Itau:
         self._authenticate7()
         self._authenticate8()
         self._authenticate9()
+
+    def get_credit_card_invoice(self):
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
+        response = self._session.post(ROUTER_URL, headers=headers)
+        menu = MenuPage(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_cards_op})
+
+        cards_menu = CheckingCardsMenu(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
+
+        cards_page = CardsPage(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': cards_page.card_details_op},
+                                      data={'idCartao': cards_page.first_card_id})
+
+        card_details = CardDetails(response.text)
+        response = self._session.post(ROUTER_URL, headers={'op': card_details.full_invoice_op},
+                                      data={'secao': 'Cartoes:MinhaFatura',
+                                            'item': ''})
+        return response.json()
 
     def get_statements(self):
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
