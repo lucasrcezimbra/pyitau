@@ -8,10 +8,11 @@ Changelog
 * Add ReadTheDocs
 * Change from pyup to dependabot
 * Update dev requirements
-    * pre-commit 2.17.0 ~> 2.20.0
-    * pytest 7.1.1 ~> 7.1.2
-    * pytest-mock 3.7.0 ~> 3.8.2
-    * sphinx 4.4.0 ~> 5.0.2
+
+  * pre-commit 2.17.0 ~> 2.20.0
+  * pytest 7.1.1 ~> 7.1.2
+  * pytest-mock 3.7.0 ~> 3.8.2
+  * sphinx 4.4.0 ~> 5.0.2
 
 .. _`#171`: https://github.com/lucasrcezimbra/pyitau/issues/171
 
