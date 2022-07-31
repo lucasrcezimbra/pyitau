@@ -16,8 +16,3 @@ def test_init():
     assert itau.account_digit == account_digit
     assert itau.password == password
     assert isinstance(itau._session, requests.Session)
-
-
-def test_headers(itau):
-    for key, value in Itau.headers.items():
-        assert itau._session.headers[key] == value
