@@ -10,7 +10,6 @@ ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
 
 class Itau:
-
     def __init__(self, agency, account, account_digit, password):
         self.agency = agency
         self.account = account
