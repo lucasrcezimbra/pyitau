@@ -15,5 +15,9 @@ def page(response):
     return CheckingAccountFullStatement(response)
 
 
-def test_op(page):
-    assert page.filter_statements_op == 'PYITAU_OP_filter_statements=;'
+def test_period_op(page):
+    assert page.filter_statements_by_period_op == 'PYITAU_OP_PERIOD_filter_statements=;'
+
+
+def test_month_op(page):
+    assert page.filter_statements_by_month_op == 'PYITAU_OP_MONTH_filter_statements=;'
