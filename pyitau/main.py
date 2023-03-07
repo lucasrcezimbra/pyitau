@@ -81,7 +81,41 @@ class Itau:
         response = self._session.post(
             ROUTER_URL,
             data={'periodoConsulta': days},
-            headers={'op': full_statement_page.filter_statements_op},
+            headers={'op': full_statement_page.filter_statements_by_period_op},
+        )
+        return response.json()
+
+    def get_statements_from_month(self, month: int = 1, year: int = 2001):
+        """
+        Get and return the full statements of a specific month.
+        """
+        if year < 2001:
+            raise Exception(f"Invalid year {year}.")
+
+        if month < 1 or month > 12:
+            raise Exception(f"Invalid month {month}.")
+
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
+
+        response = self._session.post(ROUTER_URL, headers=headers)
+        menu = MenuPage(response.text)
+
+        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
+        account_menu = CheckingAccountMenu(response.text)
+
+        response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
+        statements_page = CheckingAccountStatementsPage(response.text)
+
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': statements_page.full_statement_op},
+        )
+        full_statement_page = CheckingAccountFullStatement(response.text)
+
+        response = self._session.post(
+            ROUTER_URL,
+            data={'mesCompleto': "%02d/%d" % (month, year)},
+            headers={'op': full_statement_page.filter_statements_by_month_op},
         )
         return response.json()
 
