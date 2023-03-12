@@ -111,3 +111,10 @@ def response_checking_statements():
             </a>
         </div>
     """
+
+
+@pytest.fixture
+def response_checking_full_statement():
+    with open('./tests/responses/checking_account_full_statement.html') as file:
+        body = file.read()
+    return body

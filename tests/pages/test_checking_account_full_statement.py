@@ -4,15 +4,8 @@ from pyitau.pages import CheckingAccountFullStatement
 
 
 @pytest.fixture
-def response():
-    with open('./tests/responses/checking_account_full_statement.html') as file:
-        body = file.read()
-    return body
-
-
-@pytest.fixture
-def page(response):
-    return CheckingAccountFullStatement(response)
+def page(response_checking_full_statement):
+    return CheckingAccountFullStatement(response_checking_full_statement)
 
 
 def test_period_op(page):

@@ -65,14 +65,8 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._checking_statements_page.full_statement_op},
-        )
-        full_statement_page = CheckingAccountFullStatement(response.text)
-
-        response = self._session.post(
-            ROUTER_URL,
             data={'periodoConsulta': days},
-            headers={'op': full_statement_page.filter_statements_by_period_op},
+            headers={'op': self._checking_full_statement_page.filter_statements_by_period_op},
         )
         return response.json()
 
@@ -88,14 +82,8 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._checking_statements_page.full_statement_op},
-        )
-        full_statement_page = CheckingAccountFullStatement(response.text)
-
-        response = self._session.post(
-            ROUTER_URL,
             data={'mesCompleto': "%02d/%d" % (month, year)},
-            headers={'op': full_statement_page.filter_statements_by_month_op},
+            headers={'op': self._checking_full_statement_page.filter_statements_by_month_op},
         )
         return response.json()
 
@@ -188,3 +176,11 @@ class Itau:
             headers={'op': self._checking_menu_page.statements_op}
         )
         return CheckingAccountStatementsPage(response.text)
+
+    @cached_property
+    def _checking_full_statement_page(self):
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._checking_statements_page.full_statement_op},
+        )
+        return CheckingAccountFullStatement(response.text)
