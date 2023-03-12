@@ -53,7 +53,7 @@ def response_card_details():
 
 
 @pytest.fixture
-def authenticated_home_response():
+def response_authenticated_home():
     return """
         <div class="logo left">
             <a
@@ -71,4 +71,25 @@ def authenticated_home_response():
                 />
             </a>
         </div>
+    """
+
+
+@pytest.fixture
+def response_checking_account_menu():
+    return """
+        $(".accordion-box-conta-corrente").itauAccordion();
+        function carregarContaCorrente() {
+            if($(".btnExibirBoxContaCorrente").hasClass("ajaxRuned")){
+                mudarCookieBoxAberto("boxContaCorrente");
+                return;
+            }
+            BoxHelper.renderConteudoBox({
+                urlBox : "PYITAU_OP_statement",
+                seletorContainer : ".conteudoBoxContaCorrente",
+                onComplete : function() {
+                    $(".btnExibirBoxContaCorrente").addClass("ajaxRuned");
+                    criarCookieBoxAberto("boxContaCorrente");
+                }
+            });
+        }
     """

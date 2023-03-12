@@ -4,34 +4,13 @@ from pyitau.pages import CheckingAccountMenu
 
 
 @pytest.fixture
-def response():
-    return """
-        $(".accordion-box-conta-corrente").itauAccordion();
-        function carregarContaCorrente() {
-            if($(".btnExibirBoxContaCorrente").hasClass("ajaxRuned")){
-                mudarCookieBoxAberto("boxContaCorrente");
-                return;
-            }
-            BoxHelper.renderConteudoBox({
-                urlBox : "PYITAU_OP_statement",
-                seletorContainer : ".conteudoBoxContaCorrente",
-                onComplete : function() {
-                    $(".btnExibirBoxContaCorrente").addClass("ajaxRuned");
-                    criarCookieBoxAberto("boxContaCorrente");
-                }
-            });
-        }
-    """
+def page(response_checking_account_menu):
+    return CheckingAccountMenu(response_checking_account_menu)
 
 
-@pytest.fixture
-def page(response):
-    return CheckingAccountMenu(response)
-
-
-def test_init(response):
-    page = CheckingAccountMenu(response)
-    assert page._text == response
+def test_init(response_checking_account_menu):
+    page = CheckingAccountMenu(response_checking_account_menu)
+    assert page._text == response_checking_account_menu
 
 
 def test_statements_op(page):

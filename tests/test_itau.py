@@ -12,8 +12,8 @@ def itau():
 
 
 @pytest.fixture
-def authenticated_home_page(authenticated_home_response):
-    return AuthenticatedHomePage(authenticated_home_response)
+def authenticated_home_page(response_authenticated_home):
+    return AuthenticatedHomePage(response_authenticated_home)
 
 
 def test_init():
