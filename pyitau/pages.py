@@ -183,9 +183,16 @@ class CardsPage(SoupPage):
 
 class CheckingAccountFullStatement(TextPage):
     @property
-    def filter_statements_op(self):
+    def filter_statements_by_period_op(self):
         pattern = 'function consultarLancamentosPorPeriodo.*' \
-                  '"periodoConsulta" : parametrosPeriodo.*' \
+                  '"periodoConsulta" : parametrosPeriodo.*?' \
+                  'url = "(.*?)";'
+        return re.search(pattern, self._text, flags=re.DOTALL).group(1)
+
+    @property
+    def filter_statements_by_month_op(self):
+        pattern = 'function consultarLancamentosPorPeriodo.*' \
+                  '"mesCompleto" : parametrosPeriodo.*?' \
                   'url = "(.*?)";'
         return re.search(pattern, self._text, flags=re.DOTALL).group(1)
 
