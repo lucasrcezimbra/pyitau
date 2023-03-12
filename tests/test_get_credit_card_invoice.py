@@ -8,28 +8,6 @@ from pyitau.pages import AuthenticatedHomePage
 
 
 @pytest.fixture
-def response():
-    return """
-        <div class="logo left">
-            <a
-               data-op="PYITAU_OP"
-               href=""
-               id="HomeLogo"
-               onclick="GA.pushHeader('logoItau');"
-               title="Home"
-            >
-                <img
-                    alt="Logo Itaú"
-                    height="50"
-                    src="https://estatico.itau.com.br/.../logo-itau.png"
-                    width="50"
-                />
-            </a>
-        </div>
-    """
-
-
-@pytest.fixture()
 def response_checking_card_menu():
     return """
     <script>
@@ -61,8 +39,8 @@ def response_checking_card_menu():
 
 
 @pytest.fixture()
-def authenticated_home_page(response):
-    return AuthenticatedHomePage(response)
+def authenticated_home_page(response_authenticated_home):
+    return AuthenticatedHomePage(response_authenticated_home)
 
 
 @responses.activate

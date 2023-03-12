@@ -2,6 +2,16 @@ Changelog
 =========
 
 
+1.2.0 (2023-03-12)
+------------------
+* Add support for monthly statements. Thanks to `@davibobsin`_
+* Refactor Checking Account statements
+* Add cached-property as requirement
+* Update dev requirements
+
+.. _`@davibobsin`: https://github.com/davibobsin
+
+
 1.1.0 (2022-07-31)
 ------------------
 * Add credit card support `#171`_. Thanks to `@joaoalvarenga`_
