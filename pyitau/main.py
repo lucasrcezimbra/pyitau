@@ -64,11 +64,8 @@ class Itau:
         """
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._menu_page.checking_account_op}
+            headers={'op': self._checking_menu_page.statements_op}
         )
-        account_menu = CheckingAccountMenu(response.text)
-
-        response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
         statements_page = CheckingAccountStatementsPage(response.text)
 
         response = self._session.post(
@@ -96,11 +93,8 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._menu_page.checking_account_op}
+            headers={'op': self._checking_menu_page.statements_op}
         )
-        account_menu = CheckingAccountMenu(response.text)
-
-        response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
         statements_page = CheckingAccountStatementsPage(response.text)
 
         response = self._session.post(
@@ -189,3 +183,11 @@ class Itau:
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
         return MenuPage(response.text)
+
+    @cached_property
+    def _checking_menu_page(self):
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._menu_page.checking_account_op}
+        )
+        return CheckingAccountMenu(response.text)
