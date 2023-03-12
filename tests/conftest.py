@@ -93,3 +93,21 @@ def response_checking_account_menu():
             });
         }
     """
+
+
+@pytest.fixture
+def response_checking_statements():
+    return """
+        <div class="botoes clear clearfix no-margem-baixo">
+            <a
+                id="VerExtrato"
+                role="button"
+                class="itau-button right"
+                onclick="GA.pushModuloCategoria('contaCorrente', 'boxHome', 'verExtrato'); "
+                href="javascript:;"
+                data-op="PYITAU_OP_statements_by_period"
+            >
+                <span>ver extrato</span>
+            </a>
+        </div>
+    """

@@ -5,31 +5,13 @@ from pyitau.pages import CheckingAccountStatementsPage
 
 
 @pytest.fixture
-def response():
-    return """
-        <div class="botoes clear clearfix no-margem-baixo">
-            <a
-                id="VerExtrato"
-                role="button"
-                class="itau-button right"
-                onclick="GA.pushModuloCategoria('contaCorrente', 'boxHome', 'verExtrato'); "
-                href="javascript:;"
-                data-op="PYITAU_OP_statements_by_period"
-            >
-                <span>ver extrato</span>
-            </a>
-        </div>
-    """
+def page(response_checking_statements):
+    return CheckingAccountStatementsPage(response_checking_statements)
 
 
-@pytest.fixture
-def page(response):
-    return CheckingAccountStatementsPage(response)
-
-
-def test_init(response):
-    page = CheckingAccountStatementsPage(response)
-    assert page._soup == BeautifulSoup(response, features='html.parser')
+def test_init(response_checking_statements):
+    page = CheckingAccountStatementsPage(response_checking_statements)
+    assert page._soup == BeautifulSoup(response_checking_statements, features='html.parser')
 
 
 def test_statements_op(page):

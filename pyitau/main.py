@@ -62,15 +62,10 @@ class Itau:
         """
         Get and return the statements of the last days.
         """
-        response = self._session.post(
-            ROUTER_URL,
-            headers={'op': self._checking_menu_page.statements_op}
-        )
-        statements_page = CheckingAccountStatementsPage(response.text)
 
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': statements_page.full_statement_op},
+            headers={'op': self._checking_statements_page.full_statement_op},
         )
         full_statement_page = CheckingAccountFullStatement(response.text)
 
@@ -93,13 +88,7 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._checking_menu_page.statements_op}
-        )
-        statements_page = CheckingAccountStatementsPage(response.text)
-
-        response = self._session.post(
-            ROUTER_URL,
-            headers={'op': statements_page.full_statement_op},
+            headers={'op': self._checking_statements_page.full_statement_op},
         )
         full_statement_page = CheckingAccountFullStatement(response.text)
 
@@ -191,3 +180,11 @@ class Itau:
             headers={'op': self._menu_page.checking_account_op}
         )
         return CheckingAccountMenu(response.text)
+
+    @cached_property
+    def _checking_statements_page(self):
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._checking_menu_page.statements_op}
+        )
+        return CheckingAccountStatementsPage(response.text)

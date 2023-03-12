@@ -3,7 +3,8 @@ import requests
 import responses
 
 from pyitau.main import ROUTER_URL, Itau
-from pyitau.pages import AuthenticatedHomePage, CheckingAccountMenu, MenuPage
+from pyitau.pages import (AuthenticatedHomePage, CheckingAccountMenu,
+                          CheckingAccountStatementsPage, MenuPage)
 
 
 @pytest.fixture
@@ -19,6 +20,11 @@ def authenticated_home_page(response_authenticated_home):
 @pytest.fixture
 def menu_page(response_menu):
     return MenuPage(response_menu)
+
+
+@pytest.fixture
+def checking_menu_page(response_checking_account_menu):
+    return CheckingAccountMenu(response_checking_account_menu)
 
 
 def test_init():
@@ -71,5 +77,27 @@ def test_checking_menu_page(menu_page, itau, response_checking_account_menu):
 
     assert itau._checking_menu_page == CheckingAccountMenu(response_checking_account_menu)
     assert itau._checking_menu_page == CheckingAccountMenu(response_checking_account_menu)
+
+    assert request.call_count == 1
+
+
+@responses.activate
+def test_checking_statements_page(checking_menu_page, itau, response_checking_statements):
+    itau._checking_menu_page = checking_menu_page
+
+    request = responses.post(
+        ROUTER_URL,
+        body=response_checking_statements,
+        match=[
+            responses.matchers.header_matcher(
+                {"op": checking_menu_page.statements_op}
+            )
+        ],
+    )
+
+    expected_page = CheckingAccountStatementsPage(response_checking_statements)
+
+    assert itau._checking_statements_page == expected_page
+    assert itau._checking_statements_page == expected_page
 
     assert request.call_count == 1
