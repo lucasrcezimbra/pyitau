@@ -40,13 +40,35 @@ def response_menu():
     return body
 
 
-@pytest.fixture()
+@pytest.fixture
 def response_cards_page():
     with open('./tests/responses/cards_page.html') as f:
         return f.read()
 
 
-@pytest.fixture()
+@pytest.fixture
 def response_card_details():
     with open('./tests/responses/card_details.html') as f:
         return f.read()
+
+
+@pytest.fixture
+def authenticated_home_response():
+    return """
+        <div class="logo left">
+            <a
+               data-op="PYITAU_OP"
+               href=""
+               id="HomeLogo"
+               onclick="GA.pushHeader('logoItau');"
+               title="Home"
+            >
+                <img
+                    alt="Logo Itaú"
+                    height="50"
+                    src="https://estatico.itau.com.br/.../logo-itau.png"
+                    width="50"
+                />
+            </a>
+        </div>
+    """

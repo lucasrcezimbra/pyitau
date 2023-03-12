@@ -39,10 +39,10 @@ class Itau:
         """
         Get and return the credit card invoice.
         """
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-        response = self._session.post(ROUTER_URL, headers=headers)
-        menu = MenuPage(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_cards_op})
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._menu_page.checking_cards_op}
+        )
 
         cards_menu = CheckingCardsMenu(response.text)
         response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
@@ -61,12 +61,10 @@ class Itau:
         """
         Get and return the statements of the last days.
         """
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-
-        response = self._session.post(ROUTER_URL, headers=headers)
-        menu = MenuPage(response.text)
-
-        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._menu_page.checking_account_op}
+        )
         account_menu = CheckingAccountMenu(response.text)
 
         response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
@@ -85,7 +83,7 @@ class Itau:
         )
         return response.json()
 
-    def get_statements_from_month(self, month: int = 1, year: int = 2001):
+    def get_statements_from_month(self, month=1, year=2001):
         """
         Get and return the full statements of a specific month.
         """
@@ -95,12 +93,10 @@ class Itau:
         if month < 1 or month > 12:
             raise Exception(f"Invalid month {month}.")
 
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-
-        response = self._session.post(ROUTER_URL, headers=headers)
-        menu = MenuPage(response.text)
-
-        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._menu_page.checking_account_op}
+        )
         account_menu = CheckingAccountMenu(response.text)
 
         response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
@@ -186,3 +182,9 @@ class Itau:
 
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
         self._home = AuthenticatedHomePage(response.text)
+
+    @property
+    def _menu_page(self):
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
+        response = self._session.post(ROUTER_URL, headers=headers)
+        return MenuPage(response.text)

@@ -7,6 +7,9 @@ class TextPage:
     def __init__(self, response_text):
         self._text = response_text
 
+    def __eq__(self, other):
+        return self._text == other._text
+
 
 class SoupPage(TextPage):
     def __init__(self, response_text):

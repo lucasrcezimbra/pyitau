@@ -1,6 +1,19 @@
+import pytest
 import requests
+import responses
 
-from pyitau.main import Itau
+from pyitau.main import ROUTER_URL, Itau
+from pyitau.pages import AuthenticatedHomePage, MenuPage
+
+
+@pytest.fixture
+def itau():
+    return Itau('0000', '12345', '6', '123456')
+
+
+@pytest.fixture
+def authenticated_home_page(authenticated_home_response):
+    return AuthenticatedHomePage(authenticated_home_response)
 
 
 def test_init():
@@ -16,3 +29,20 @@ def test_init():
     assert itau.account_digit == account_digit
     assert itau.password == password
     assert isinstance(itau._session, requests.Session)
+
+
+@responses.activate
+def test_menu_page(authenticated_home_page, itau, response_menu):
+    itau._home = authenticated_home_page
+    responses.add(
+        responses.POST,
+        ROUTER_URL,
+        body=response_menu,
+        match=[
+            responses.matchers.header_matcher(
+                {"op": authenticated_home_page.op, "segmento": "VAREJO"}
+            )
+        ],
+    )
+
+    assert itau._menu_page == MenuPage(response_menu)
