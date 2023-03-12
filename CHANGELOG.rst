@@ -6,6 +6,7 @@ Changelog
 ------------------
 * Add support for monthly statements. Thanks to `@davibobsin`_
 * Refactor Checking Account statements
+* Add cached-property as requirement
 * Update dev requirements
 
 .. _`@davibobsin`: https://github.com/davibobsin
