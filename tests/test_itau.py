@@ -34,8 +34,7 @@ def test_init():
 @responses.activate
 def test_menu_page(authenticated_home_page, itau, response_menu):
     itau._home = authenticated_home_page
-    responses.add(
-        responses.POST,
+    request = responses.post(
         ROUTER_URL,
         body=response_menu,
         match=[
@@ -46,3 +45,6 @@ def test_menu_page(authenticated_home_page, itau, response_menu):
     )
 
     assert itau._menu_page == MenuPage(response_menu)
+    assert itau._menu_page == MenuPage(response_menu)
+
+    assert request.call_count == 1

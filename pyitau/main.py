@@ -1,4 +1,5 @@
 import requests
+from cached_property import cached_property
 
 from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
                           CheckingAccountFullStatement, CheckingAccountMenu,
@@ -183,7 +184,7 @@ class Itau:
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
         self._home = AuthenticatedHomePage(response.text)
 
-    @property
+    @cached_property
     def _menu_page(self):
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
