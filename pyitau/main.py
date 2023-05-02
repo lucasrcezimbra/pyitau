@@ -35,26 +35,47 @@ class Itau:
         self._authenticate8()
         self._authenticate9()
 
-    def get_credit_card_invoice(self):
+    def get_credit_card_invoice(self, card_name=None):
         """
         Get and return the credit card invoice.
         """
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-        response = self._session.post(ROUTER_URL, headers=headers)
+        headers = {"op": self._home.op, "segmento": "VAREJO"}
+        self._session.post(ROUTER_URL, headers=headers)
+
+        response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
         menu = MenuPage(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_cards_op})
 
-        cards_menu = CheckingCardsMenu(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
-
-        cards_page = CardsPage(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': cards_page.card_details_op},
-                                      data={'idCartao': cards_page.first_card_id})
-
+        headers = {
+            "op": menu.checking_cards_home_op,
+            "X-FLOW-ID": self._flow_id,
+            "X-CLIENT-ID": self._client_id,
+            "X-Requested-With": "XMLHttpRequest",
+        }
+        response = self._session.post(ROUTER_URL, headers=headers)
         card_details = CardDetails(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': card_details.full_invoice_op},
-                                      data={'secao': 'Cartoes:MinhaFatura',
-                                            'item': ''})
+        card_full_statement_op = card_details.full_statement_op
+
+        response = self._session.post(
+            ROUTER_URL,
+            headers={"op": card_details.invoice_op},
+            data={"secao": "Cartoes", "item": "Home"},
+        )
+        response_json = response.json()
+        cards = response_json["object"]["data"]
+
+        self._session.post(
+            ROUTER_URL,
+            headers={"op": card_details.invoice_op},
+            data={"secao": "Cartoes:MinhaFatura", "item": ""},
+        )
+
+        if not card_name:
+            card_id = cards[0]['id']
+        else:
+            card_id = [card for card in cards if card['nome'] == card_name][0]['id']
+        response = self._session.post(
+            ROUTER_URL, headers={"op": card_full_statement_op}, data=card_id
+        )
         return response.json()
 
     def get_statements(self, days=90):

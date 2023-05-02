@@ -124,8 +124,28 @@ class AuthenticatedHomePage(SoupPage):
     def op(self):
         return self._soup.find('div', class_='logo left').find('a').attrs['data-op']
 
+    @property
+    def menu_op(self):
+        return re.search(
+            r"var obterMenu = function\(\) \{"
+            r'[\n\t\r\s]+var perfil = \$\("#portalTxt"\).val\(\);'
+            r"[\n\t\r\s]+\$.ajax\(\{"
+            r'[\n\t\r\s]+url : "([^"]+)"',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
+
 
 class MenuPage(TextPage):
+
+    @property
+    def checking_cards_home_op(self):
+        return re.search(
+            r"'cartoes','homeCategoria'(.*?)\"[\n\r\s\t]+data-op=\'([^\']+)\'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
     @property
     def checking_account_op(self):
         return re.search(
@@ -192,10 +212,26 @@ class CheckingAccountFullStatement(TextPage):
 
 class CardDetails(TextPage):
     @property
-    def full_invoice_op(self):
+    def invoice_op(self):
+        try:
+            return re.search(
+                r'if \(habilitaFaturaCotacaoDolar === "true"\) '
+                r'{[\n\t\r\s]+urlContingencia = "([^"]+)"',
+                self._text,
+                flags=re.DOTALL,
+            ).group(1)
+        except AttributeError:
+            return re.search(
+                r'if \(habilitaDashboardCotacaoDolar === "true"\) '
+                r'{[\n\t\r\s]+urlContingencia = "([^"]+)"',
+                self._text,
+                flags=re.DOTALL,
+            ).group(1)
+
+    @property
+    def full_statement_op(self):
         return re.search(
-            r'if \(habilitaFaturaCotacaoDolar === "true"\) '
-            r'{[\n\t\r\s]+urlContingencia = "([^"]+)"',
+            r"data: cartaoSelecionado.id," r'[\n\t\r\s]+url: "([^"]+)"',
             self._text,
             flags=re.DOTALL,
         ).group(1)
