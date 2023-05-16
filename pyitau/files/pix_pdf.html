@@ -1,0 +1,183 @@
+<style>
+    .detalhe-lancamento-original .saque-troco p.identificacao-label {
+        width: 150px
+    }
+
+    h3 {
+        margin-top: 20px
+    }
+
+    .identificacao-conteudo .identificacao-label, .identificacao-conteudo .identificacao-texto--valor-positivo, .identificacao-conteudo .identificacao-texto--valor-negativo {
+        font-family: 'itau-display-bold'
+    }
+
+    .identificacao-tipo {
+        font-family: 'itau-display-bold'
+    }
+
+    .identificacao-conteudo .identificacao-texto, .identificacao-conteudo .identificacao-texto--bank, .identificacao-conteudo .identificacao-texto--name, .identificacao-conteudo .identificacao-texto--data, .identificacao-conteudo .identificacao-texto--lancamento {
+        font-family: 'itau-display-regular';
+        width: 250px
+    }
+
+    .identificacao-conteudo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        font-size: 14px;
+        color: #231D19;
+        display: block;
+        clear: both;
+    }
+
+    .identificacao-conteudo .identificacao-label, .identificacao-conteudo .identificacao-texto--data {
+        width: 150px;
+    }
+
+    cpv-modal .modal-title, .modal-transacao-original cpv-modal .modal-title {
+        text-transform: lowercase
+    }
+
+    cpv-modal .modal-dialog, .modal-transacao-original cpv-modal .modal-dialog {
+        min-width: 700px
+    }
+
+    cpv-modal .modal .modal-body p, .modal-transacao-original cpv-modal .modal .modal-body p {
+        font-size: 14px
+    }
+
+    .detalhe-pix-container {
+        padding: 10px 24px 24px 124px
+    }
+
+    .identificacao-tipo {
+        font-size: 14px;
+        color: #231D19;
+        line-height: 24px;
+        text-transform: lowercase
+    }
+
+    .identificacao-conteudo .identificacao-label {
+        line-height: 8px;
+        margin-bottom: 0
+    }
+
+    .identificacao-conteudo .identificacao-texto {
+        line-height: 3px;
+        width: 250px
+    }
+
+    .identificacao-conteudo .identificacao-texto--name {
+        text-transform: capitalize;
+        width: 250px
+    }
+
+    .identificacao-conteudo .identificacao-texto--bank {
+        text-transform: uppercase;
+        width: 250px
+    }
+
+    .identificacao-conteudo .identificacao-texto--bank, .identificacao-conteudo .identificacao-texto--name {
+        line-height: 0px;
+
+    }
+
+    .identificacao-conteudo .identificacao-texto--data {
+        line-height: 8px;
+        margin-bottom: 0;
+        width: 150px
+    }
+
+    .identificacao-conteudo .identificacao-texto--valor-positivo {
+        line-height: 8px;
+        color: #007a47;
+        width: 150px
+    }
+
+    .identificacao-conteudo .identificacao-texto--valor-negativo {
+        line-height: 8px;
+        color: #B71C1C;
+        width: 150px
+    }
+
+    .identificacao-conteudo .identificacao-texto--lancamento {
+        line-height: 8px;
+        text-transform: uppercase;
+        width: 250px
+    }
+
+    .detalhe-pix-devolucao {
+        border-top: 1px solid #D6D0CC;
+        padding-top: 16px
+    }
+
+    .detalhe-pix-devolucao .identificacao-conteudo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+    }
+
+    p {
+        float: left;
+        margin-right: 16px;
+    }
+
+    .identificacao-texto--data.ng-binding {
+        line-height: normal;
+    }
+
+    .identificacao-tipo.ng-binding.ng-scope {
+        margin-top: 15px
+    }
+
+    h3 {
+        margin-bottom: 0px;
+
+    }
+
+    span {
+        font-family: 'itau-display-regular';
+    }
+
+    .detalhe-pix-identificacao, .detalhe-lancamento-original, .identificacao-conteudo {
+        display: table;
+    }
+
+    .identificacao-conteudo .identificacao-texto--valor-bloqueado {
+        font-family: 'itau-display-bold';
+        line-height: 8px;
+        color: #106EB0;
+        width: 150px
+    }
+
+</style>
+
+<div class="detalhe-pix-conteudo">
+    <div class="detalhe-lancamento-original">
+        <div class="identificacao-conteudo">
+            <p class="identificacao-label">lan&ccedil;amento</p>
+            <p class="identificacao-texto--lancamento">{literalLancamento}</p></div>
+        <div class="identificacao-conteudo">
+            <p class="identificacao-label">data</p>
+            <p class="identificacao-texto">{dataHora}</p></div>
+        <div class="identificacao-conteudo">
+            <p class="identificacao-label">valor(R$)</p>
+            <p class="identificacao-texto--valor-negativo">- {valor}</p></div>
+    </div>
+    <div class="detalhe-pix-identificacao">
+        <h3 class="identificacao-tipo">{fraseTipoLancamento}</h3>
+        <div class="detalhe-pix-identificacao">
+            <div class="identificacao-conteudo">
+                <p class="identificacao-label">nome</p>
+                    <p class="identificacao-texto--name" style="text-transform:lowercase">{nomeFavorecido}</p>
+            </div>
+            <div class="identificacao-conteudo">
+                <p class="identificacao-label">banco</p>
+                <p class="identificacao-texto--bank">
+                    <span>{bancoFavorecido}</span></p></div>
+            <div class="identificacao-conteudo">
+                <p class="identificacao-label">ID</p>
+                <p class="identificacao-texto">{codigoControleCamara}</p></div>
+        </div>
+    </div>
+</div>

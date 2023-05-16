@@ -146,6 +146,35 @@ class MenuPage(TextPage):
         ).group(1)
 
 
+class BiggerMenuPage(TextPage):
+    """Page that contains the big menu with all the possible account options."""
+
+    @property
+    def checking_cards_home_op(self):
+        return re.search(
+            r"'cartoes','homeCategoria'(.*?)\"[\n\r\s\t]+data-op=\'([^\']+)\'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
+    @property
+    def checking_cards_op(self):
+        return re.search(
+            r"'cartoes','cartoes/faturaLimite'(.*?)\""
+            r"[\n\r\s\t]+data-op=\'([^\']+)\'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
+    @property
+    def pix_statements_op(self):
+        return re.search(
+            r"'pix','pix/extratoPix'(.*?)[\n\t\r\s]data-op='([^\"]+)'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
+
 class CheckingAccountMenu(TextPage):
     @property
     def statements_op(self):
@@ -209,3 +238,50 @@ class CardDetails(TextPage):
             self._text,
             flags=re.DOTALL,
         ).group(1)
+
+
+class PixPage(SoupPage):
+    @property
+    def pix_statements_op(self):
+        return re.search(
+            r"self.consultarLancamentos = function\("
+            r"periodo, pagina, filtro, ordenacao\){[\n\r\t\s]+"
+            r"self.erroApiLancamento = false;[\n\r\t\s]+"
+            r"\$.Ajax\({[\n\r\t\s]+"
+            r'dataType : "json"[\n\r\t\s,]+'
+            r'method : "POST"[\n\r\t\s,]+'
+            r"headers : {[\n\r\t\s]+"
+            r'"op" : "([^"]+)"[\n\r\t\s,]+',
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
+
+    @property
+    def pix_future_op(self):
+        return re.search(
+            r"self.consultarLancamentosFuturos = function\(pagina, ordenacao\){[\n\r\t\s]+"
+            r"\$.Ajax\({[\n\r\t\s]+"
+            r'dataType : "json"[\n\r\t\s,]+'
+            r'method : "POST"[\n\r\t\s,]+'
+            r"headers : {[\n\r\t\s]+"
+            r'"op" : "([^"]+)"[\n\r\t\s,]+',
+            self._text,
+            flags=re.DOTALL,
+        )
+
+    @property
+    def pix_impressao_html_op(self):
+        return re.search(
+            r"imprimirTemplateHTML\([\n\r\t\s]+"
+            r"'Detalhes',[\n\r\t\s]"
+            r"+null,[\n\r\t\s]+"
+            r"'([^']+)'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(1)
+
+    @property
+    def pix_impressao_op(self):
+        form = self._soup.find("form", attrs={"id": "formImpressaoPDF"})
+        input = form.find("input", {"name": "op", "type": "hidden"})
+        return input.attrs["data-op"]
