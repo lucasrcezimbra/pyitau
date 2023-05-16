@@ -5,11 +5,11 @@ from pathlib import Path
 import requests
 from cached_property import cached_property
 
-from pyitau.pages import (AuthenticatedHomePage, BiggerMenuPage, CardDetails, CardsPage,
-                          CheckingAccountFullStatement, CheckingAccountMenu,
-                          CheckingAccountStatementsPage, CheckingCardsMenu,
-                          FirstRouterPage,MenuPage, PasswordPage, PixPage, SecondRouterPage,
-                          ThirdRouterPage)
+from pyitau.pages import (AuthenticatedHomePage, BiggerMenuPage, CardDetails,
+                          CardsPage, CheckingAccountFullStatement,
+                          CheckingAccountMenu, CheckingAccountStatementsPage,
+                          CheckingCardsMenu, FirstRouterPage, MenuPage,
+                          PasswordPage, PixPage, SecondRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
