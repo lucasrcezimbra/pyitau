@@ -146,6 +146,35 @@ class MenuPage(TextPage):
         ).group(1)
 
 
+class BiggerMenuPage(TextPage):
+    """Page that contains the big menu with all the possible account options."""
+
+    @property
+    def checking_cards_home_op(self):
+        return re.search(
+            r"'cartoes','homeCategoria'(.*?)\"[\n\r\s\t]+data-op=\'([^\']+)\'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
+    @property
+    def checking_cards_op(self):
+        return re.search(
+            r"'cartoes','cartoes/faturaLimite'(.*?)\""
+            r"[\n\r\s\t]+data-op=\'([^\']+)\'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
+    @property
+    def pix_statements_op(self):
+        return re.search(
+            r"'pix','pix/extratoPix'(.*?)[\n\t\r\s]data-op='([^\"]+)'",
+            self._text,
+            flags=re.DOTALL,
+        ).group(2)
+
+
 class CheckingAccountMenu(TextPage):
     @property
     def statements_op(self):

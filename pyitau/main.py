@@ -1,11 +1,15 @@
+import os
+from datetime import datetime
+from pathlib import Path
+
 import requests
 from cached_property import cached_property
 
-from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
+from pyitau.pages import (AuthenticatedHomePage, BiggerMenuPage, CardDetails, CardsPage,
                           CheckingAccountFullStatement, CheckingAccountMenu,
                           CheckingAccountStatementsPage, CheckingCardsMenu,
-                          FirstRouterPage, MenuPage, PasswordPage,
-                          SecondRouterPage)
+                          FirstRouterPage,MenuPage, PasswordPage, PixPage, SecondRouterPage,
+                          ThirdRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -87,6 +91,71 @@ class Itau:
         )
         return response.json()
 
+    def get_pix(self, days=90):
+        """Get and return the pix transaction for the last {days}."""
+
+        response = self._session.post(
+            ROUTER_URL, headers={"op": self._bigger_menu_page.pix_statements_op})
+        self.pix_page = PixPage(response.text)
+
+        data = {
+            "periodo": f"{days}",
+            "page": "1",
+            "filtro": "debito",
+            "ordenacao": "desc",
+        }
+
+        headers = {
+            "Op": self.pix_page.pix_statements_op,
+            "X-FLOW-ID": self._flow_id,
+            "X-CLIENT-ID": self._client_id,
+            "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        }
+
+        response = self._session.post(ROUTER_URL, data=data, headers=headers)
+        return response.json()['lancamentos']
+
+    def get_pix_receipts(self, pix_transactions):
+        """Returns a generator containing the binary files of the given pix transactions."""
+
+        headers = {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip",
+            "Content-type": "application/x-www-form-urlencoded",
+            "Op": self.pix_page.pix_impressao_op,
+        }
+
+        path = os.path.abspath(Path(__file__) / ".." / "files" / "pix_pdf.html")
+        with open(path, "r") as fname:
+            template = fname.read()
+
+        for data in pix_transactions:
+            final_html = template[:3800] + template[3800:].format(
+                literalLancamento=data["literalLancamento"],
+                dataHora=data["dataHora"],
+                valor=data["valor"],
+                fraseTipoLancamento=data["fraseTipoLancamento"],
+                nomeFavorecido=data["nomeFavorecido"],
+                bancoFavorecido=data["bancoFavorecido"],
+                codigoControleCamara=data["codigoControleCamara"],
+            )
+
+            payload = {
+                "op": "",
+                "htmlContent": final_html,
+                "titulo": "Detalhes",
+                "nomeArquivo": "detalhe-pix",
+                "dataHoraAtualizacao": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            }
+
+            yield self._session.post(
+                ROUTER_URL,
+                data=payload,
+                headers=headers,
+            )
+
     def _authenticate2(self):
         data = {
             'portal': '005',
@@ -160,6 +229,14 @@ class Itau:
         headers = {'op': self._home.op, 'segmento': 'VAREJO'}
         response = self._session.post(ROUTER_URL, headers=headers)
         return MenuPage(response.text)
+
+    @cached_property
+    def _bigger_menu_page(self):
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
+        self._session.post(ROUTER_URL, headers=headers)
+
+        response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
+        return BiggerMenuPage(response.text)
 
     @cached_property
     def _checking_menu_page(self):
