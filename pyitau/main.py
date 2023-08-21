@@ -4,17 +4,19 @@ from cached_property import cached_property
 from pyitau.pages import (AuthenticatedHomePage, CardDetails,
                           CheckingAccountFullStatement, CheckingAccountMenu,
                           CheckingAccountStatementsPage, FirstRouterPage,
-                          MenuPage, PasswordPage, SecondRouterPage)
+                          MenuPage, PasswordPage, SecondRouterPage,
+                          ThirdRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
 
 class Itau:
-    def __init__(self, agency, account, account_digit, password):
+    def __init__(self, agency, account, account_digit, password, holder_name=None):
         self.agency = agency
         self.account = account
         self.account_digit = account_digit
         self.password = password
+        self.holder_name = holder_name
         self._session = requests.Session()
         self._session.headers = {
             **self._session.headers,
@@ -160,10 +162,27 @@ class Itau:
     def _authenticate8(self):
         headers = {'op': self._op7}
         response = self._session.post(ROUTER_URL, headers=headers)
-        page = PasswordPage(response.text)
 
-        self._op8 = page.op
+        page = ThirdRouterPage(response.text)
+        if self.holder_name and page.has_account_holders_form:
+            holders_op = page.op
+            holder, holder_index = page.find_account_holder(self.holder_name)
+            headers = {
+                "op": holders_op,
+            }
+            data = {
+                "nomeTitular": holder,
+                "indexTitular": holder_index,
+            }
+            self._session.post(ROUTER_URL, headers=headers, data=data)
+            self._authenticate6()
+            self._authenticate7()
+            headers = {"op": self._op7}
+            response = self._session.post(ROUTER_URL, headers=headers)
+
+        page = PasswordPage(response.text)
         self._letter_password = page.letter_password(self.password)
+        self._op8 = page.op
 
     def _authenticate9(self):
         headers = {'op': self._op8}

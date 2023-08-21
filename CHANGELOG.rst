@@ -2,6 +2,14 @@ Changelog
 =========
 
 
+(unreleased)
+------------------
+* Add support for accounts with multiple holders. Thanks to `@ivancrneto`_
+* Fix pre-commit hooks
+
+.. _`@ivancrneto`: https://github.com/ivancrneto
+
+
 1.2.2 (2023-03-12)
 ------------------
 * Add support for monthly statements. Thanks to `@davibobsin`_
