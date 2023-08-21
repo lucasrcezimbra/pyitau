@@ -18,6 +18,7 @@ pyitau
 Unofficial client to access your Itaú bank data
 
 * Documentation: https://pyitau.readthedocs.io.
+* Status page: https://pyitau.betteruptime.com/
 
 
 Installation

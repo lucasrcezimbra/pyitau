@@ -1,4 +1,5 @@
 import requests
+from cached_property import cached_property
 
 from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
                           CheckingAccountFullStatement, CheckingAccountMenu,
@@ -40,10 +41,10 @@ class Itau:
         """
         Get and return the credit card invoice.
         """
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-        response = self._session.post(ROUTER_URL, headers=headers)
-        menu = MenuPage(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_cards_op})
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._menu_page.checking_cards_op}
+        )
 
         cards_menu = CheckingCardsMenu(response.text)
         response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
@@ -62,27 +63,28 @@ class Itau:
         """
         Get and return the statements of the last days.
         """
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-
-        response = self._session.post(ROUTER_URL, headers=headers)
-        menu = MenuPage(response.text)
-
-        response = self._session.post(ROUTER_URL, headers={'op': menu.checking_account_op})
-        account_menu = CheckingAccountMenu(response.text)
-
-        response = self._session.post(ROUTER_URL, headers={'op': account_menu.statements_op})
-        statements_page = CheckingAccountStatementsPage(response.text)
-
-        response = self._session.post(
-            ROUTER_URL,
-            headers={'op': statements_page.full_statement_op},
-        )
-        full_statement_page = CheckingAccountFullStatement(response.text)
 
         response = self._session.post(
             ROUTER_URL,
             data={'periodoConsulta': days},
-            headers={'op': full_statement_page.filter_statements_op},
+            headers={'op': self._checking_full_statement_page.filter_statements_by_period_op},
+        )
+        return response.json()
+
+    def get_statements_from_month(self, month=1, year=2001):
+        """
+        Get and return the full statements of a specific month.
+        """
+        if year < 2001:
+            raise Exception(f"Invalid year {year}.")
+
+        if month < 1 or month > 12:
+            raise Exception(f"Invalid month {month}.")
+
+        response = self._session.post(
+            ROUTER_URL,
+            data={'mesCompleto': "%02d/%d" % (month, year)},
+            headers={'op': self._checking_full_statement_page.filter_statements_by_month_op},
         )
         return response.json()
 
@@ -170,3 +172,33 @@ class Itau:
 
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
         self._home = AuthenticatedHomePage(response.text)
+
+    @cached_property
+    def _menu_page(self):
+        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
+        response = self._session.post(ROUTER_URL, headers=headers)
+        return MenuPage(response.text)
+
+    @cached_property
+    def _checking_menu_page(self):
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._menu_page.checking_account_op}
+        )
+        return CheckingAccountMenu(response.text)
+
+    @cached_property
+    def _checking_statements_page(self):
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._checking_menu_page.statements_op}
+        )
+        return CheckingAccountStatementsPage(response.text)
+
+    @cached_property
+    def _checking_full_statement_page(self):
+        response = self._session.post(
+            ROUTER_URL,
+            headers={'op': self._checking_statements_page.full_statement_op},
+        )
+        return CheckingAccountFullStatement(response.text)

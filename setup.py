@@ -9,7 +9,7 @@ if __name__ == "__main__":
     setup(
         name='pyitau',
         description='Scraper to download data from Itaú Internet Banking',
-        version='1.1.0',
+        version='1.2.2',
         long_description=open(README).read(),
         author="Lucas Rangel Cezimbra",
         author_email="lucas.cezimbra@gmail.com",
@@ -17,7 +17,7 @@ if __name__ == "__main__":
         url='https://github.com/lucasrcezimbra/pyitau',
         keywords=['pyitau', 'itau', 'api', 'client', 'requests',
                   'banking', 'bank', 'finance', 'accounting'],
-        install_requires=['beautifulsoup4', 'requests'],
+        install_requires=['beautifulsoup4', 'cached-property', 'requests'],
         packages=['pyitau'],
         zip_safe=False,
         include_package_data=True,
