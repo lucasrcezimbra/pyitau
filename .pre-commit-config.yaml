@@ -3,7 +3,7 @@
 exclude: tests/responses/
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.4.0
   hooks:
     - id: check-ast
     - id: check-case-conflict
@@ -12,17 +12,17 @@ repos:
     - id: mixed-line-ending
     - id: requirements-txt-fixer
     - id: trailing-whitespace
-- repo: https://gitlab.com/pycqa/flake8
-  rev: 3.9.1
+- repo: https://github.com/pycqa/flake8
+  rev: 6.1.0
   hooks:
     - id: flake8
       exclude: 'docs/'
 - repo: https://github.com/PyCQA/bandit
-  rev: 1.7.0
+  rev: 1.7.5
   hooks:
     - id: bandit
       args: [--exclude, tests]
 - repo: https://github.com/timothycrosley/isort
-  rev: 5.8.0
+  rev: 5.12.0
   hooks:
     - id: isort
