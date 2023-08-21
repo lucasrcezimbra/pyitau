@@ -145,7 +145,7 @@ class Itau:
         page = ThirdRouterPage(response.text)
         if self.holder_name and page.has_account_holders_form:
             holders_op = page.op
-            holder, holder_index = page.find_account_holders(self.holder_name)
+            holder, holder_index = page.find_account_holder(self.holder_name)
             headers = {
                 "op": holders_op,
             }
