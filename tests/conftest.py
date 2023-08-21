@@ -118,3 +118,9 @@ def response_checking_full_statement():
     with open('./tests/responses/checking_account_full_statement.html') as file:
         body = file.read()
     return body
+
+
+@pytest.fixture
+def response_third_router_page():
+    with open('./tests/responses/third_router_page.html') as f:
+        return f.read()

@@ -74,6 +74,43 @@ class SecondRouterPage(TextPage):
         ).group(1)
 
 
+class ThirdRouterPage(SoupPage):
+    """
+    Página com escolha do titular caso a conta tenha mais de um titular.
+    """
+
+    @property
+    def op(self):
+        """
+        Campo op do formulário de titularidade
+        """
+        return self._soup.find("input", id="op").attrs["value"]
+
+    @property
+    def has_account_holders_form(self):
+        return bool(self._soup.find("form", attrs={"id": "formTitularidade"}))
+
+    @property
+    def account_holders(self):
+        form = self._soup.find("form", attrs={"id": "formTitularidade"})
+        ul = form.find(name="ul", attrs={"class": "selecao-nome-titular"})
+        atags = ul.find_all(
+            "a", attrs={"href": re.compile("javascript:titularSelecionado")}
+        )
+        return [
+            re.search(
+                r"javascript:titularSelecionado\('(\w+)', '(\d)'\);", tag.attrs["href"]
+            ).groups()
+            for tag in atags
+        ]
+
+    def find_account_holder(self, holder_name):
+        for name, id in self.account_holders:
+            if name != holder_name:
+                continue
+            return (name, id)
+
+
 class PasswordPage(SoupPage):
     """
     Página do teclado da senha. Contém 2 dígitos por botão.
