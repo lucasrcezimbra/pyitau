@@ -4,7 +4,7 @@ from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
                           CheckingAccountFullStatement, CheckingAccountMenu,
                           CheckingAccountStatementsPage, CheckingCardsMenu,
                           FirstRouterPage, MenuPage, PasswordPage,
-                          SecondRouterPage)
+                          SecondRouterPage, ThirdRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 

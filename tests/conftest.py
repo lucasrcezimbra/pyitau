@@ -40,13 +40,19 @@ def response_menu():
     return body
 
 
-@pytest.fixture()
+@pytest.fixture
 def response_cards_page():
     with open('./tests/responses/cards_page.html') as f:
         return f.read()
 
 
-@pytest.fixture()
+@pytest.fixture
 def response_card_details():
     with open('./tests/responses/card_details.html') as f:
+        return f.read()
+
+
+@pytest.fixture
+def response_third_router_page():
+    with open('./tests/responses/third_router_page.html') as f:
         return f.read()

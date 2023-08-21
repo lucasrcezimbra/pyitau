@@ -87,22 +87,25 @@ class ThirdRouterPage(SoupPage):
     def has_account_holders_form(self):
         return bool(self._soup.find("form", attrs={"id": "formTitularidade"}))
 
-    def find_account_holders(self, holder_name):
+    @property
+    def account_holders(self):
         form = self._soup.find("form", attrs={"id": "formTitularidade"})
         ul = form.find(name="ul", attrs={"class": "selecao-nome-titular"})
         atags = ul.find_all(
             "a", attrs={"href": re.compile("javascript:titularSelecionado")}
         )
-        account_holders = [
+        return [
             re.search(
-                "javascript:titularSelecionado\('(\w+)', '(\d)'\);", tag.attrs["href"]
+                r"javascript:titularSelecionado\('(\w+)', '(\d)'\);", tag.attrs["href"]
             ).groups()
             for tag in atags
         ]
 
-        for holder in account_holders:
-            if holder_name == holder[0]:
-                return holder
+    def find_account_holder(self, holder_name):
+        for name, id in self.account_holders:
+            if name != holder_name:
+                continue
+            return (name, id)
 
 
 class PasswordPage(SoupPage):
