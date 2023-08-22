@@ -4,7 +4,7 @@ import pytest
 import responses
 
 from pyitau.main import ROUTER_URL
-from pyitau.pages import AuthenticatedHomePage
+from pyitau.pages import AuthenticatedHomePage, CardDetails, Menu2Page
 
 
 @pytest.fixture
@@ -38,9 +38,19 @@ def response_checking_card_menu():
     """
 
 
-@pytest.fixture()
+@pytest.fixture
 def authenticated_home_page(response_authenticated_home):
     return AuthenticatedHomePage(response_authenticated_home)
+
+
+@pytest.fixture
+def menu2_page(response_menu2):
+    return Menu2Page(response_menu2)
+
+
+@pytest.fixture
+def card_details_page(response_card_details):
+    return CardDetails(response_card_details)
 
 
 @responses.activate
@@ -48,12 +58,15 @@ def test_get_credit_card_invoice(
     itau,
     mocker,
     authenticated_home_page,
-    response_menu,
-    response_checking_card_menu,
-    response_cards_page,
+    menu2_page,
+    card_details_page,
     response_card_details,
+    response_menu,
+    response_menu2,
 ):
     itau._home = authenticated_home_page
+    itau._flow_id = "PYITAU_FLOW_ID"
+    itau._client_id = "PYITAU_CLIENT_ID"
 
     responses.add(
         responses.POST,
@@ -69,17 +82,8 @@ def test_get_credit_card_invoice(
     responses.add(
         responses.POST,
         ROUTER_URL,
-        body=response_checking_card_menu,
-        match=[responses.matchers.header_matcher({"op": "PYITAU_OP_Cartoes"})],
-    )
-
-    responses.add(
-        responses.POST,
-        ROUTER_URL,
-        body=response_cards_page,
-        match=[
-            responses.matchers.header_matcher({"op": "PYITAU_CONTEUDO_BOX_CARTOES_OP"})
-        ],
+        body=response_menu2,
+        match=[responses.matchers.header_matcher({"op": authenticated_home_page.menu_op})],
     )
 
     responses.add(
@@ -87,9 +91,23 @@ def test_get_credit_card_invoice(
         ROUTER_URL,
         body=response_card_details,
         match=[
-            responses.matchers.header_matcher({"op": "PYITAU_FATURA_REDESENHO_OP"}),
+            responses.matchers.header_matcher({
+                "op": menu2_page.checking_cards_op,
+                "X-FLOW-ID": itau._flow_id,
+                "X-CLIENT-ID": itau._client_id,
+                "X-Requested-With": "XMLHttpRequest",
+            })
+        ],
+    )
+
+    responses.add(
+        responses.POST,
+        ROUTER_URL,
+        json={"object": {"data": [{"id": "PYITAU_CARD_ID"}]}},
+        match=[
+            responses.matchers.header_matcher({"op": card_details_page.invoice_op}),
             responses.matchers.urlencoded_params_matcher(
-                {"idCartao": "PYITAU_CARD_ID"}
+                {"secao": "Cartoes", "item": "Home"}
             ),
         ],
     )
@@ -97,16 +115,21 @@ def test_get_credit_card_invoice(
     responses.add(
         responses.POST,
         ROUTER_URL,
-        body="""{"success": true}""",
+        body='',
         match=[
-            responses.matchers.header_matcher(
-                {"op": "PYITAU_URL_CONTIGENCIA_DOLAR_OP"}
-            ),
+            responses.matchers.header_matcher({"op": card_details_page.invoice_op}),
             responses.matchers.urlencoded_params_matcher(
-                {"secao": "Cartoes:MinhaFatura"}
+                {"secao": "Cartoes:MinhaFatura", "item": ""}
             ),
-        ],
+        ]
     )
+
+    responses.add(
+        responses.POST,
+        ROUTER_URL,
+        json={"success": True},
+    )
+
     post_spy = mocker.spy(itau._session, "post")
     assert itau.get_credit_card_invoice() == {"success": True}
 
@@ -114,17 +137,27 @@ def test_get_credit_card_invoice(
         call(
             ROUTER_URL, headers={"op": authenticated_home_page.op, "segmento": "VAREJO"}
         ),
-        call(ROUTER_URL, headers={"op": "PYITAU_OP_Cartoes"}),
-        call(ROUTER_URL, headers={"op": "PYITAU_CONTEUDO_BOX_CARTOES_OP"}),
+        call(ROUTER_URL, headers={"op": authenticated_home_page.menu_op}),
+        call(ROUTER_URL, headers={
+            "op": menu2_page.checking_cards_op,
+            "X-FLOW-ID": itau._flow_id,
+            "X-CLIENT-ID": itau._client_id,
+            "X-Requested-With": "XMLHttpRequest",
+        }),
         call(
             ROUTER_URL,
-            headers={"op": "PYITAU_FATURA_REDESENHO_OP"},
-            data={"idCartao": "PYITAU_CARD_ID"},
+            headers={"op": card_details_page.invoice_op},
+            data={"secao": "Cartoes", "item": "Home"},
         ),
         call(
             ROUTER_URL,
-            headers={"op": "PYITAU_URL_CONTIGENCIA_DOLAR_OP"},
+            headers={"op": card_details_page.invoice_op},
             data={"secao": "Cartoes:MinhaFatura", "item": ""},
+        ),
+        call(
+            ROUTER_URL,
+            headers={"op": card_details_page.full_statement_op},
+            data='PYITAU_CARD_ID',
         ),
     ]
     post_spy.assert_has_calls(calls)

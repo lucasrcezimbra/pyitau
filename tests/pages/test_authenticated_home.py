@@ -5,25 +5,8 @@ from pyitau.pages import AuthenticatedHomePage
 
 
 @pytest.fixture
-def response():
-    return """
-        <div class="logo left">
-            <a
-               data-op="PYITAU_OP"
-               href=""
-               id="HomeLogo"
-               onclick="GA.pushHeader('logoItau');"
-               title="Home"
-            >
-                <img
-                    alt="Logo Itaú"
-                    height="50"
-                    src="https://estatico.itau.com.br/.../logo-itau.png"
-                    width="50"
-                />
-            </a>
-        </div>
-    """
+def response(response_authenticated_home):
+    return response_authenticated_home
 
 
 @pytest.fixture
@@ -34,6 +17,10 @@ def page(response):
 def test_init(response):
     page = AuthenticatedHomePage(response)
     assert page._soup == BeautifulSoup(response, features='html.parser')
+
+
+def test_menu_op(page):
+    assert page.menu_op == 'PYITAU_MENU_OP'
 
 
 def test_op(page):

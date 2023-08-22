@@ -15,7 +15,3 @@ def test_init(response_menu):
 
 def test_op(page):
     assert page.checking_account_op == 'PYITAU_OP_ContaCorrente'
-
-
-def test_checking_cards_op(page: MenuPage):
-    assert page.checking_cards_op == 'PYITAU_OP_Cartoes'

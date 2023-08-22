@@ -1,11 +1,11 @@
 import requests
 from cached_property import cached_property
 
-from pyitau.pages import (AuthenticatedHomePage, CardDetails, CardsPage,
+from pyitau.pages import (AuthenticatedHomePage, CardDetails,
                           CheckingAccountFullStatement, CheckingAccountMenu,
-                          CheckingAccountStatementsPage, CheckingCardsMenu,
-                          FirstRouterPage, MenuPage, PasswordPage,
-                          SecondRouterPage, ThirdRouterPage)
+                          CheckingAccountStatementsPage, FirstRouterPage,
+                          Menu2Page, MenuPage, PasswordPage, SecondRouterPage,
+                          ThirdRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
 
@@ -37,26 +37,45 @@ class Itau:
         self._authenticate8()
         self._authenticate9()
 
-    def get_credit_card_invoice(self):
+    def get_credit_card_invoice(self, card_name=None):
         """
         Get and return the credit card invoice.
         """
+        self._session.post(ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"})
+
+        response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
+        # TODO: is it possible to use only Menu2Page and remove MenuPage?
+        menu = Menu2Page(response.text)
+
+        response = self._session.post(ROUTER_URL, headers={
+            "op": menu.checking_cards_op,
+            "X-FLOW-ID": self._flow_id,
+            "X-CLIENT-ID": self._client_id,
+            "X-Requested-With": "XMLHttpRequest",
+        })
+        card_details = CardDetails(response.text)
+
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._menu_page.checking_cards_op}
+            headers={"op": card_details.invoice_op},
+            data={"secao": "Cartoes", "item": "Home"},
+        )
+        cards = response.json()["object"]["data"]
+
+        self._session.post(
+            ROUTER_URL,
+            headers={"op": card_details.invoice_op},
+            data={"secao": "Cartoes:MinhaFatura", "item": ""},
         )
 
-        cards_menu = CheckingCardsMenu(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': cards_menu.cards_op})
+        if not card_name:
+            card_id = cards[0]['id']
+        else:
+            card_id = next(c for c in cards if c['nome'] == card_name)['id']
 
-        cards_page = CardsPage(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': cards_page.card_details_op},
-                                      data={'idCartao': cards_page.first_card_id})
-
-        card_details = CardDetails(response.text)
-        response = self._session.post(ROUTER_URL, headers={'op': card_details.full_invoice_op},
-                                      data={'secao': 'Cartoes:MinhaFatura',
-                                            'item': ''})
+        response = self._session.post(
+            ROUTER_URL, headers={"op": card_details.full_statement_op}, data=card_id
+        )
         return response.json()
 
     def get_statements(self, days=90):
