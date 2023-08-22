@@ -4,7 +4,7 @@ from cached_property import cached_property
 from pyitau.pages import (AuthenticatedHomePage, CardDetails,
                           CheckingAccountFullStatement, CheckingAccountMenu,
                           CheckingAccountStatementsPage, FirstRouterPage,
-                          MenuPage, PasswordPage, SecondRouterPage,
+                          Menu2Page, MenuPage, PasswordPage, SecondRouterPage,
                           ThirdRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
@@ -45,10 +45,11 @@ class Itau:
         self._session.post(ROUTER_URL, headers=headers)
 
         response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
-        menu = MenuPage(response.text)
+        # TODO: is it possible to use only Menu2Page and remove MenuPage?
+        menu = Menu2Page(response.text)
 
         headers = {
-            "op": menu.checking_cards_home_op,
+            "op": menu.checking_cards_op,
             "X-FLOW-ID": self._flow_id,
             "X-CLIENT-ID": self._client_id,
             "X-Requested-With": "XMLHttpRequest",

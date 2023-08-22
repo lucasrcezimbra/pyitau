@@ -143,6 +143,22 @@ def response_checking_statements():
 
 
 @pytest.fixture
+def response_menu2():
+    return """
+        <li class="titulo "  >
+            <a onclick="GA.pushMegaMenu('cartoes','homeCategoria');...;"
+                data-op='PYITAU_OP_cartoes'
+                href="javascript:;"
+                tabindex="24"
+
+                >
+                cart&otilde;es
+            </a>
+        </li>
+    """
+
+
+@pytest.fixture
 def response_checking_full_statement():
     with open('./tests/responses/checking_account_full_statement.html') as file:
         body = file.read()
