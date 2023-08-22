@@ -41,30 +41,26 @@ class Itau:
         """
         Get and return the credit card invoice.
         """
-        headers = {"op": self._home.op, "segmento": "VAREJO"}
-        self._session.post(ROUTER_URL, headers=headers)
+        self._session.post(ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"})
 
         response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
         # TODO: is it possible to use only Menu2Page and remove MenuPage?
         menu = Menu2Page(response.text)
 
-        headers = {
+        response = self._session.post(ROUTER_URL, headers={
             "op": menu.checking_cards_op,
             "X-FLOW-ID": self._flow_id,
             "X-CLIENT-ID": self._client_id,
             "X-Requested-With": "XMLHttpRequest",
-        }
-        response = self._session.post(ROUTER_URL, headers=headers)
+        })
         card_details = CardDetails(response.text)
-        card_full_statement_op = card_details.full_statement_op
 
         response = self._session.post(
             ROUTER_URL,
             headers={"op": card_details.invoice_op},
             data={"secao": "Cartoes", "item": "Home"},
         )
-        response_json = response.json()
-        cards = response_json["object"]["data"]
+        cards = response.json()["object"]["data"]
 
         self._session.post(
             ROUTER_URL,
@@ -75,9 +71,10 @@ class Itau:
         if not card_name:
             card_id = cards[0]['id']
         else:
-            card_id = [card for card in cards if card['nome'] == card_name][0]['id']
+            card_id = next(c for c in cards if c['nome'] == card_name)['id']
+
         response = self._session.post(
-            ROUTER_URL, headers={"op": card_full_statement_op}, data=card_id
+            ROUTER_URL, headers={"op": card_details.full_statement_op}, data=card_id
         )
         return response.json()
 
