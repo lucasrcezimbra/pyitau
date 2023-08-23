@@ -1,6 +1,6 @@
 import pytest
 
-from pyitau.pages import CheckingCards
+from pyitau.pages import CheckingCardsMenu
 
 
 @pytest.fixture()
@@ -35,10 +35,10 @@ def response():
 
 
 def test_init(response):
-    page = CheckingCards(response)
+    page = CheckingCardsMenu(response)
     assert page._text == response
 
 
 def test_op(response):
-    page = CheckingCards(response)
+    page = CheckingCardsMenu(response)
     assert page.cards_op == "PYITAU_CONTEUDO_BOX_CARTOES_OP"

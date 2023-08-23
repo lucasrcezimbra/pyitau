@@ -195,7 +195,7 @@ class Itau:
         response = self._session.post(
             ROUTER_URL, headers={"op": self._menu_page.checking_account_op}
         )
-        return pages.CheckingAccount(response.text)
+        return pages.CheckingAccountMenu(response.text)
 
     @cached_property
     def _checking_statements_page(self):

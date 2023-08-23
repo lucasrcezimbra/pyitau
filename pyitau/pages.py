@@ -202,13 +202,13 @@ class Menu(TextPage):
         ).group(2)
 
 
-class CheckingAccount(TextPage):
+class CheckingAccountMenu(TextPage):
     @property
     def statements_op(self):
         return re.search(r'url : "(.*)"', self._text).group(1)
 
 
-class CheckingCards(TextPage):
+class CheckingCardsMenu(TextPage):
     @property
     def cards_op(self):
         return re.search(

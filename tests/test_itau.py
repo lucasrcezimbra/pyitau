@@ -5,8 +5,8 @@ import responses
 from pyitau.main import ROUTER_URL, Itau
 from pyitau.pages import (
     AuthenticatedHome,
-    CheckingAccount,
     CheckingAccountFullStatement,
+    CheckingAccountMenu,
     CheckingAccountStatements,
     Menu,
 )
@@ -29,7 +29,7 @@ def menu_page(response_menu):
 
 @pytest.fixture
 def checking_menu_page(response_checking_account_menu):
-    return CheckingAccount(response_checking_account_menu)
+    return CheckingAccountMenu(response_checking_account_menu)
 
 
 @pytest.fixture
@@ -91,8 +91,12 @@ def test_checking_menu_page(menu_page, itau, response_checking_account_menu):
         ],
     )
 
-    assert itau._checking_menu_page == CheckingAccount(response_checking_account_menu)
-    assert itau._checking_menu_page == CheckingAccount(response_checking_account_menu)
+    assert itau._checking_menu_page == CheckingAccountMenu(
+        response_checking_account_menu
+    )
+    assert itau._checking_menu_page == CheckingAccountMenu(
+        response_checking_account_menu
+    )
 
     assert request.call_count == 1
 
