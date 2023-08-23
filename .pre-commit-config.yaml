@@ -3,26 +3,25 @@
 exclude: tests/responses/
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.4.0
   hooks:
+    - id: check-added-large-files
     - id: check-ast
     - id: check-case-conflict
+    - id: check-merge-conflict
     - id: debug-statements
     - id: end-of-file-fixer
     - id: mixed-line-ending
-    - id: requirements-txt-fixer
     - id: trailing-whitespace
-- repo: https://github.com/pycqa/flake8
-  rev: 3.9.1
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.0.285
   hooks:
-    - id: flake8
-      exclude: 'docs/'
-- repo: https://github.com/PyCQA/bandit
-  rev: 1.7.0
+    - id: ruff
+      args: [--fix, --exit-non-zero-on-fix]
+
+- repo: https://github.com/psf/black
+  rev: 23.7.0
   hooks:
-    - id: bandit
-      args: [--exclude, tests]
-- repo: https://github.com/timothycrosley/isort
-  rev: 5.12.0
-  hooks:
-    - id: isort
+  - id: black
+    types: [python]

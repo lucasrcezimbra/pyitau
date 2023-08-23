@@ -5,93 +5,127 @@ from pyitau import Itau
 
 @pytest.fixture
 def itau():
-    agency = '0000'
-    account = '12345'
-    account_digit = '6'
-    password = '123456'
+    agency = "0000"
+    account = "12345"
+    account_digit = "6"
+    password = "123456"
     return Itau(agency, account, account_digit, password)
 
 
 @pytest.fixture
 def response_authenticate2():
-    with open('./tests/responses/authenticate2.html') as file:
+    with open("./tests/responses/authenticate2.html") as file:
         body = file.read()
     return body
 
 
 @pytest.fixture
 def response_authenticate5():
-    with open('./tests/responses/authenticate5.html') as file:
+    with open("./tests/responses/authenticate5.html") as file:
         body = file.read()
     return body
 
 
 @pytest.fixture
 def response_authenticate8():
-    with open('./tests/responses/authenticate8.html') as file:
-        body = file.read()
-    return body
-
-
-@pytest.fixture
-def response_menu():
-    with open('./tests/responses/menu.html') as file:
+    with open("./tests/responses/authenticate8.html") as file:
         body = file.read()
     return body
 
 
 @pytest.fixture
 def response_cards_page():
-    with open('./tests/responses/cards_page.html') as f:
+    with open("./tests/responses/cards_page.html") as f:
         return f.read()
 
 
 @pytest.fixture
 def response_card_details():
-    with open('./tests/responses/card_details.html') as f:
+    with open("./tests/responses/card_details.html") as f:
         return f.read()
 
 
 @pytest.fixture
 def response_authenticated_home():
     return """
-        <div class="logo left">
-            <a
-               data-op="PYITAU_OP"
-               href=""
-               id="HomeLogo"
-               onclick="GA.pushHeader('logoItau');"
-               title="Home"
-            >
-                <img
-                    alt="Logo Itaú"
-                    height="50"
-                    src="https://estatico.itau.com.br/.../logo-itau.png"
-                    width="50"
-                />
-            </a>
-        </div>
+        <input type="hidden" id="portalTxt" value="varejo"/>
+        <script id="item" type="text/javascript">
+            var obterMenu = function() {
+                var perfil = $("#portalTxt").val();
+                $.ajax({
+                    url : "PYITAU_MENU_OP",
+                    dataType : "html",
+                    method : "POST",
+                    async: true,
+                    showLoading: false,
+                    headers : {
+                        "ajaxRequest" : true
+                    },
+                    success : function(data) {
+                        $("#menu_p_fisica").replaceWith(data);
+
+                    },
+                    error : function(erro){
+                        $("#formError").submit();
+                    }
+                });
+            };
+
+            if(window.addEventListener){
+                window.addEventListener('load', obterMenu)
+            } else {
+                window.attachEvent('onload', obterMenu)
+            }
+        </script></li>
+                    </ul>
+                </nav>
+
+                <div class="logo left">
+                    <a onclick="GA.pushHeader('logoItau');" href=""
+                        title="Home"
+                        id="HomeLogo"
+                        data-op="PYITAU_OP">
+
+
+                            <img src="https://estatico.itau.com.br/.../logo-itau.png" width="50"
+                                    height="50" alt="Logo Ita&uacute;" />
+
+
+                    </a>
+                </div>
     """
 
 
 @pytest.fixture
 def response_checking_account_menu():
     return """
-        $(".accordion-box-conta-corrente").itauAccordion();
-        function carregarContaCorrente() {
-            if($(".btnExibirBoxContaCorrente").hasClass("ajaxRuned")){
-                mudarCookieBoxAberto("boxContaCorrente");
-                return;
-            }
-            BoxHelper.renderConteudoBox({
-                urlBox : "PYITAU_OP_statement",
-                seletorContainer : ".conteudoBoxContaCorrente",
-                onComplete : function() {
-                    $(".btnExibirBoxContaCorrente").addClass("ajaxRuned");
-                    criarCookieBoxAberto("boxContaCorrente");
+    <script id='scriptmenuContexto' type="text/javascript">
+        var obterMenuContextomenuContexto = function() {
+            $(".blockUI").remove();
+            $.ajax({
+                url : "PYITAU_OP_statement",
+                dataType : "html",
+                method : "POST",
+                showLoading:false,
+                data : {
+                    "contexto" : "",
+                    "montarModulo" : "",
+                    "mapaDoSite" : ""
+                },
+                headers : {
+                    "ajaxRequest" : true
+                },
+                success : function(data) {
+                    $('#menuContexto').replaceWith(data);
+                    $('html').removeClass("uiConfiguration-runed");
                 }
             });
-        }
+        };
+
+        $(function() {
+            obterMenuContextomenuContexto();
+        });
+    </script>
     """
 
 
@@ -114,7 +148,40 @@ def response_checking_statements():
 
 
 @pytest.fixture
+def response_menu():
+    return """
+        <li class="titulo "  >
+            <a onclick="GA.pushMegaMenu('contaCorrente','homeCategoria');disparar('Clique;...');"
+                data-op='PYITAU_OP_conta_corrente'
+                href="javascript:;"
+                tabindex="2"
+
+                >
+                conta corrente
+            </a>
+        </li>
+
+        <li class="titulo "  >
+            <a onclick="GA.pushMegaMenu('cartoes','homeCategoria');...;"
+                data-op='PYITAU_OP_cartoes'
+                href="javascript:;"
+                tabindex="24"
+
+                >
+                cart&otilde;es
+            </a>
+        </li>
+    """
+
+
+@pytest.fixture
 def response_checking_full_statement():
-    with open('./tests/responses/checking_account_full_statement.html') as file:
+    with open("./tests/responses/checking_account_full_statement.html") as file:
         body = file.read()
     return body
+
+
+@pytest.fixture
+def response_third_router_page():
+    with open("./tests/responses/third_router_page.html") as f:
+        return f.read()

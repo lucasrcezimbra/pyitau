@@ -3,24 +3,28 @@ import requests
 import responses
 
 from pyitau.main import ROUTER_URL, Itau
-from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
-                          CheckingAccountMenu, CheckingAccountStatementsPage,
-                          MenuPage)
+from pyitau.pages import (
+    AuthenticatedHome,
+    CheckingAccountFullStatement,
+    CheckingAccountMenu,
+    CheckingAccountStatements,
+    Menu,
+)
 
 
 @pytest.fixture
 def itau():
-    return Itau('0000', '12345', '6', '123456')
+    return Itau("0000", "12345", "6", "123456")
 
 
 @pytest.fixture
 def authenticated_home_page(response_authenticated_home):
-    return AuthenticatedHomePage(response_authenticated_home)
+    return AuthenticatedHome(response_authenticated_home)
 
 
 @pytest.fixture
 def menu_page(response_menu):
-    return MenuPage(response_menu)
+    return Menu(response_menu)
 
 
 @pytest.fixture
@@ -30,14 +34,14 @@ def checking_menu_page(response_checking_account_menu):
 
 @pytest.fixture
 def checking_statements_page(response_checking_statements):
-    return CheckingAccountStatementsPage(response_checking_statements)
+    return CheckingAccountStatements(response_checking_statements)
 
 
 def test_init():
-    agency = '0000'
-    account = '12345'
-    account_digit = '6'
-    password = '123456'
+    agency = "0000"
+    account = "12345"
+    account_digit = "6"
+    password = "123456"
 
     itau = Itau(agency, account, account_digit, password)
 
@@ -51,20 +55,28 @@ def test_init():
 @responses.activate
 def test_menu_page(authenticated_home_page, itau, response_menu):
     itau._home = authenticated_home_page
-    request = responses.post(
+    request1 = responses.post(
         ROUTER_URL,
-        body=response_menu,
+        body="",
         match=[
             responses.matchers.header_matcher(
                 {"op": authenticated_home_page.op, "segmento": "VAREJO"}
             )
         ],
     )
+    request2 = responses.post(
+        ROUTER_URL,
+        body=response_menu,
+        match=[
+            responses.matchers.header_matcher({"op": authenticated_home_page.menu_op})
+        ],
+    )
 
-    assert itau._menu_page == MenuPage(response_menu)
-    assert itau._menu_page == MenuPage(response_menu)
+    assert itau._menu_page == Menu(response_menu)
+    assert itau._menu_page == Menu(response_menu)
 
-    assert request.call_count == 1
+    assert request1.call_count == 1
+    assert request2.call_count == 1
 
 
 @responses.activate
@@ -75,33 +87,35 @@ def test_checking_menu_page(menu_page, itau, response_checking_account_menu):
         ROUTER_URL,
         body=response_checking_account_menu,
         match=[
-            responses.matchers.header_matcher(
-                {"op": menu_page.checking_account_op}
-            )
+            responses.matchers.header_matcher({"op": menu_page.checking_account_op})
         ],
     )
 
-    assert itau._checking_menu_page == CheckingAccountMenu(response_checking_account_menu)
-    assert itau._checking_menu_page == CheckingAccountMenu(response_checking_account_menu)
+    assert itau._checking_menu_page == CheckingAccountMenu(
+        response_checking_account_menu
+    )
+    assert itau._checking_menu_page == CheckingAccountMenu(
+        response_checking_account_menu
+    )
 
     assert request.call_count == 1
 
 
 @responses.activate
-def test_checking_statements_page(checking_menu_page, itau, response_checking_statements):
+def test_checking_statements_page(
+    checking_menu_page, itau, response_checking_statements
+):
     itau._checking_menu_page = checking_menu_page
 
     request = responses.post(
         ROUTER_URL,
         body=response_checking_statements,
         match=[
-            responses.matchers.header_matcher(
-                {"op": checking_menu_page.statements_op}
-            )
+            responses.matchers.header_matcher({"op": checking_menu_page.statements_op})
         ],
     )
 
-    expected_page = CheckingAccountStatementsPage(response_checking_statements)
+    expected_page = CheckingAccountStatements(response_checking_statements)
 
     assert itau._checking_statements_page == expected_page
     assert itau._checking_statements_page == expected_page

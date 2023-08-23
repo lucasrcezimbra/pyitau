@@ -14,4 +14,4 @@ def test_init(response_checking_account_menu):
 
 
 def test_statements_op(page):
-    assert page.statements_op == 'PYITAU_OP_statement'
+    assert page.statements_op == "PYITAU_OP_statement"

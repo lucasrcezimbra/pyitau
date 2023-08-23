@@ -1,21 +1,454 @@
-<script>
-  self.init = function() {
-			var habilitaFaturaCotacaoDolar = "true";
+<script type="text/javascript">
 
-	    	var urlContingencia = "PYITAU_URL_CONTINGENCIA_OP";
+	let app = angular.module('app', ['ngSanitize', 'CpvCartaoModule', 'PageHeaderModule', 'ModalModule','WarningModule']);
 
-            if (habilitaFaturaCotacaoDolar === "true") {
-            	urlContingencia = "PYITAU_URL_CONTIGENCIA_DOLAR_OP";
+	app.config(function($compileProvider){
+		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|javascript):/);
+	});
+	
+	app.controller('appController', ['$scope', '$timeout', '$filter', function($scope, $timeout, $filter) {
+	    var self = this;
+	    self.cartoes = [];
+	    self.indexCartaoSelecionado =0;
+	    self.dataModalFatura = {};
+        self.qtdCartoes;
+        self.showLimites  = false;
+        self.showOferta = false;
+	    self.programaRecompensa = {};
+	    self.quantidadeCartoesVisiveis = 2;
+	    self.quantidadeBuscaCartoes = 2;
+	    self.acaoModal ='';
+	    self.indexCartaoModal=0;
+	    self.adobe = {};
+	    self.habilitaFluxoCartaoCancelado = "true";
+        
+        self.ajustarBandeiras = function(cartoes){
+        	angular.forEach(cartoes, function(cartao, key){
+        		if( "escuro" == cartao.customizacao.cor_do_icone && cartao.bandeira == "visa" ) {
+    				cartao.bandeira = cartao.bandeira + "_azul";
+				} else {
+    				cartao.bandeira = cartao.bandeira;	    					
+				}
+        	});        
+        }
+		
+		self.feedbackLeitor = function(mensagem){
+			self.ariaLabelAlert = mensagem;
+       		
+           	$timeout (function () {
+            	self.ariaLabelAlert = '';
+            }, 2000);
+         }
+        
+        
+		self.enviarAdobe = function(data, objectData, sucesso, erro){
+        	
+        	var params = {
+        			type : "POST",
+        			async : true,
+        			url: "PYITAU_enviar_adobe",
+    	    		dataType: "json",
+    	    		data: data,
+    	    		headers: {
+    	    			ajaxRequest : true,
+    	    			scrollToTop : false,
+    	                'Content-Type': 'application/x-www-form-urlencoded'
+    	    		}
+    	    	};
+        	
+        	$.ajax(params)
+	    	.success(function(response) {
+	    		var obj = {
+	    				'adobe' : response.object,
+	    				'data' : objectData
+	    		}
+	    		sucesso(obj);
+	    	})
+	    	.error(function(response) {
+	    		erro(response);
+	    	});
+   		};
+   		
+   		self.enviarAdobeRetornoModal = function() {
+   			tagPaginaCategoria({'adobe':self.adobe}, {'qtd': self.cartoes.length - 1});
+    	}
+        
+        self.abrirModalPontos = function(indexCartao){
+			var params = {
+				type: "POST",
+				data: { dnCartao: self.cartoes[indexCartao].dn },
+				async: true,
+				dataType: "json",
+				url: "PYITAU_abrir_modal_pontos",
+				headers: {
+					ajaxRequest: true,
+					scrollToTop: false,
+					Accept: "application/vnd.itau.json"
+				}
+			};
+		
+			$.ajax(params)
+				.success(function(response) {
+					if (response.ok) {
+						var fluxo;
+						self.programaRecompensa = response.object;
+
+						if(self.programaRecompensa){
+							self.programaRecompensa.dataExpiracao = $filter('date')(self.programaRecompensa.dataExpiracao, "dd/MM/yyyy");
+
+							if (self.programaRecompensa.plataforma === "iupp") {
+								$("#modal-programa-iupp").modal("show");
+								fluxo = "Iupp";
+							} else if (self.programaRecompensa.parceiro) {
+								$("#modal-nao-gerido").modal("show");
+								fluxo = "Parceiros";
+							} else {
+								$("#modal-programa-pontos").modal("show");
+								fluxo = "Itau";
+							}
+						} else {
+							$("#modal-nao-cadastrado").modal("show");
+							fluxo = "NaoCadastrado";
+						}
+
+						window.analyticsData.page = Object.assign(window.analyticsData.page, {"page": "IT:LG:PF:Cartoes:MinhaFatura:ProgramadePontos:" + fluxo});
+					} else {
+						$("#modal-pontos-indisponivel").modal("show");
+						window.analyticsData.custom = Object.assign(
+							window.analyticsData.custom, 
+							{
+								'item': 'Cartoes:MinhaFatura:ErroCarregamentoProgramadePontos',
+								'evento': 'erro',
+								'secao': 'Cartoes:MinhaFatura:ProgramadePontos'
+							}
+						);
+					}
+					$scope.$apply();
+					window.adobeDataLayer.sendDataLayer();
+				})
+				.error(function() {
+					$("#modal-pontos-indisponivel").modal("show");
+					window.analyticsData.custom = Object.assign(
+						window.analyticsData.custom, 
+						{
+							'item': 'Cartoes:MinhaFatura:ErroCarregamentoProgramadePontos',
+							'evento': 'erro',
+							'secao': 'Cartoes:MinhaFatura:ProgramadePontos'
+						}
+					);
+
+					window.adobeDataLayer.sendDataLayer();
+				});
+        }
+   		
+   		self.mostrarMaisCartoes = function(){
+   			self.buscarFaturasAtuaisProximas(function(){		
+	   			self.quantidadeCartoesVisiveis += self.quantidadeBuscaCartoes;
+   				$scope.$apply();
+   			});
+   			var data = {
+        			'item': 'ExibirMaisCartoes',
+        			'evento': 'cliqueEmBotao',
+        			'secao': 'Cartoes'
+        	}
+        	self.enviarAdobe(data, {"useLastPageName": true}, customLinkAdobe, function(response){console.log(response);});
+   		}
+    
+        self.buscarDadosCompletos = function(idCartao, indexCartao){
+        	var cartaoSelecionado = self.cartoes[indexCartao];
+        	if(cartaoSelecionado.fatura == undefined){
+	        	var params = {
+	        			type : "POST",
+	        			async : true,
+	        			contentType: "application/json",
+	        			data: cartaoSelecionado.id,
+	        			url: "PYITAU_full_statement_op",
+	    	    		dataType: "json",
+	    	    		headers: {
+	    	    			ajaxRequest : true,
+	    	    			scrollToTop : false
+	    	    		}
+	    	    };     	
+	        	$.ajax(params)
+		    	.success(function(response) {
+		    		cartaoSelecionado = self.popularDadosCompletos(response.object, cartaoSelecionado);
+		    		$scope.$apply();
+		    	})
+		    	.error(function(response) {
+		    		console.log(response);
+		    	});
+        	}
+        }
+        
+        self.popularFaturaAtualProxima = function(cartoes,atualizarVisualizacao){
+    		for(var i = self.quantidadeCartoesVisiveis, indexCartao = 0; i<= (self.quantidadeCartoesVisiveis+self.quantidadeBuscaCartoes) && i < self.cartoes.length; i++, indexCartao++){
+        		cartao = self.cartoes[i];
+        		cartao.vencimento 	= cartoes[indexCartao].vencimento;
+        		cartao.erroFatura = cartoes[indexCartao].erroFatura;
+        		cartao.faturas = cartoes[indexCartao].faturas;
+        		cartao.indicePrimeiraFaturaExibida = cartoes[indexCartao].indicePrimeiraFaturaExibida;
+			}
+    		atualizarVisualizacao();
+    	}
+        
+        
+        self.buscarFaturasAtuaisProximas = function(atualizarVisualizacao){
+        	var idCartoes = [];
+        	for(var i = self.quantidadeCartoesVisiveis; i<= (self.quantidadeCartoesVisiveis+self.quantidadeBuscaCartoes) && i < self.cartoes.length; i++){
+        		idCartoes.push(self.cartoes[i].id);
+        	}
+
+			var params = {
+	        			type : "POST",
+	        			async : true,
+	        			contentType: "application/json",
+	        			data: JSON.stringify(idCartoes),
+	        			url: "PYITAU_buscar_fatura_atuais_proximos",
+	    	    		dataType: "json",
+	    	    		headers: {
+	    	    			ajaxRequest : true,
+	    	    			scrollToTop : false
+	    	    		}
+	    	};     	
+	        $.ajax(params)
+		    .success(function(response) {
+		    	cartaoSelecionado = self.popularFaturaAtualProxima(response.object, atualizarVisualizacao);
+		    	$scope.$apply();
+		    })
+		    .error(function(response) {
+		    });
+        }
+        
+        self.detalhar = function(indexCartao) {
+        	self.cartoes[indexCartao].cardExpanded = !self.cartoes[indexCartao].cardExpanded;
+        	var params = {
+        			type : "POST",
+        			async : true,
+        			contentType: "application/json",
+        			data: self.cartoes[indexCartao].id,
+        			url: "PYITAU_detalhar",
+    	    		dataType: "json",
+    	    		headers: {
+    	    			ajaxRequest : true,
+    	    			scrollToTop : false
+    	    		}
+    	    };     	
+        	$.ajax(params)
+	    	.success(function(response) {
+	    		self.cartoes[indexCartao] = self.popularDadosCompletos(response.object, self.cartoes[indexCartao]);
+	    		$scope.$apply();
+	    	})
+	    	.error(function(response) {
+	    	});
+        	
+        	var data = {
+        			'item': 'Detalhes',
+        			'evento': 'cliqueEmBotao',
+        			'secao': 'Cartoes'
+        	}
+        	self.enviarAdobe(data, {"useLastPageName": true}, customLinkAdobe, function(response){console.log(response);});
+        	
+        }
+        
+        self.popularDadosCompletos = function(objeto, cartao){
+			cartao.situacaoContaCartao = objeto.situacaoContaCartao;
+			cartao.situacaoSaldoFatura = objeto.situacaoSaldoFatura;
+			cartao.melhorCompra = objeto.melhorCompra;
+			cartao.erroDataMelhorCompra=objeto.erroDataMelhorCompra;
+			cartao.erroFatura=objeto.erroFatura;
+			cartao.erroLimites=objeto.erroLimites;
+			cartao.timelineFatura = objeto.timelineFatura;
+			cartao.indicePrimeiraFaturaExibida = objeto.indicePrimeiraFaturaExibida;
+        	if(objeto.vencimento != null){
+    			cartao.vencimento 	= objeto.vencimento;
+        	}
+			if(objeto.limites != undefined){
+				cartao.limites 		= self.popularLimites(objeto.limites);
+			}
+			if(objeto.faturas != undefined && objeto.faturas.length != 0){
+				cartao.faturas = objeto.faturas;
+			}
+			return cartao;
+    	}
+        
+        self.montarCartao = function(objeto){
+        	var cartao 			= {};
+			cartao.cor 			= objeto.customizacao.nome;
+			cartao.titulo 		= objeto.nome;
+			cartao.nome 		= objeto.nomeCliente;
+			cartao.id = objeto.id;
+			cartao.dn = objeto.codigoProduto;
+			
+			if( "escuro" == objeto.customizacao.cor_do_icone && objeto.bandeira == "visa" ) {
+				cartao.bandeira = objeto.bandeira + "_azul";
+			} else if (objeto.bandeira != ""){
+				cartao.bandeira = objeto.bandeira;	    					
+			} else {
+				cartao.bandeira = "";
+			}
+			
+			cartao.numero 	= "final " + objeto.numero;
+			cartao.digitosFinais = objeto.numero;
+			return cartao;
+        }
+        
+        self.gerarBoleto = function(index){
+        	if(!index){
+        		index = self.indexCartaoModal;
+        	}
+        	var formulario = document.getElementById("formGerarBoleto");
+        	$('input[name=idCartao]', formulario).val(self.cartoes[index].id);
+        	$('input[name=valorPagamento]', formulario).val(self.cartoes[index].faturas[self.cartoes[index].indicePrimeiraFaturaExibida].valorAberto);
+        	$("#formGerarBoleto").submit();
+        	
+        	var data = {
+        			'item': 'GerarBoleto',
+        			'evento': 'cliqueEmBotao',
+        			'secao': 'Cartoes'
+        	}
+        	self.enviarAdobe(data, {"useLastPageName": true}, customLinkAdobe, function(response){console.log(response);});
+        }
+        
+        self.verFatura = function(indexCartao) {
+        	var formulario = document.getElementById("formVerFatura");
+        	$('input[name=idCartao]', formulario).val(self.cartoes[indexCartao].id);
+        	$("#formVerFatura").submit();
+        }
+        
+        self.pagarFatura = function(indexCartao){
+        	if(!indexCartao){
+        		indexCartao = self.indexCartaoModal;
+        	}
+        	self.salvarDadosPagarFatura(indexCartao, function(response){
+        		if(response.ok) {
+        			if(response.object != undefined){
+        		    	executaConvivenciaOp('PYITAU_convivencia_op','formPagarFatura');
+        			} else {
+        				var formulario = document.getElementById("formPagarFaturaRedesenho");
+        	        	$('input[name=idCartao]', formulario).val(self.cartoes[indexCartao].id);
+        	        	$("#modal-debito-automatico").modal("hide");
+        	        	$("#formPagarFaturaRedesenho").submit();
+
+        			}
+        		}
+        	}, function(response){
+        	});
+        }
+        
+        self.abrirModalDebitoAutomatico = function(indexCartao,acao){
+            
+            self.indexCartaoModal = indexCartao;
+            self.acaoModal = acao;
+            if(acao === "pagarFatura"){
+	           self.salvarDadosPagarFatura(indexCartao,function(sucesso){},function(error){});
             }
-
+           tagModal({'adobe':self.adobe}, "DebitoAutomatico");
+           $("#modal-debito-automatico").modal("show");
+            
+            
+      }
+        
+        self.salvarDadosPagarFatura = function(indexCartao, sucesso, erro){
+        	var params = {
+        			type : "POST",
+        			async : true,
+        			contentType: "application/json",
+        			data: self.cartoes[indexCartao].numero.replace("final ", ""),
+        			url: "PYITAU_salvar_dados_pagar_fatura",
+    	    		dataType: "json",
+    	    		headers: {
+    	    			ajaxRequest : true,
+    	    			scrollToTop : false
+    	    		}
+    	    	};
+        	
+        	$.ajax(params)
+	    	.success(function(response) {
+	    		sucesso(response);
+	    	})
+	    	.error(function(response) {
+	    		erro(response);
+	    	});
+   		};
+        
+        self.popularLimites = function(limites){
+    		var limiteObjeto = limites;
+	    	var limites		= {};
+    		if(limiteObjeto != undefined && limiteObjeto != null){
+	    		self.showLimites = true;
+				limites.saldoDisponivel 		= limiteObjeto.limiteCreditoDisponivelValor;
+				limites.limiteUtilizado 		= limiteObjeto.limiteCreditoUtilizadoValor;
+				limites.total 					= limiteObjeto.limiteCreditoValor;
+				limites.percentualDisponivel 	= limiteObjeto.percentualDisponivel;
+				limites.percentualUtilizado 	= limiteObjeto.percentualUtilizado;
+				limites.flexivel 				= limiteObjeto.limiteFlexivel;
+				limites.overLimit 				= limiteObjeto.overLimit;
+				
+				if(limites.overLimit === "true"){
+					limites.tipoLimite ="overLimit";
+					limites.saldoDisponivel ="0,00";
+				}
+				else if(limites.flexivel === "true"){
+					if(limites.limiteUtilizado === "0,00" || limites.limiteUtilizado === "0"){
+						limites.tipoLimite ="flexivelNaoUtilizado";
+					}else{
+						limites.tipoLimite ="flexivelUtilizado";
+					}
+				}
+				else if(limites.limiteUtilizado === "0,00" || limites.limiteUtilizado === "0"){
+						limites.tipoLimite ="naoUtilizado";
+				}
+				else if(limites.limiteUtilizado === limites.total){
+					limites.tipoLimite ="totalmenteUtilizado";
+				}
+				else{
+					limites.tipoLimite ="parcialmenteUtilizado";
+				}
+    		}
+    		return limites;
+    	}
+        
+        self.toggleCartaoCanceladoCartaoAtivo = function(situacaoContaCartao){
+        	if(self.habilitaFluxoCartaoCancelado === 'true'){
+        		if(!['1', '2', '8', 'A'].includes(situacaoContaCartao)){
+        			 return true;
+        		 }else{
+        			 return false;
+        		 }
+        	}else{
+        		return true;
+        	}
+        }
+	    
+	    self.toggleCartaoCanceladoCartaoInativo = function(situacaoContaCartao){
+        	if(self.habilitaFluxoCartaoCancelado === 'true'){
+        		if(['1', '2', '8', 'A'].includes(situacaoContaCartao)){
+        			 return true;
+        		 }else{
+        			 return false;
+        		 }
+        	}else{
+        		return false;
+        	}
+        }
+        
+	    self.init = function() {
+			var habilitaDashboardCotacaoDolar = "true";
+	    	
+	    	var urlContingencia = "PYITAU_random_string";
+            
+            if (habilitaDashboardCotacaoDolar === "true") {
+            	urlContingencia = "PYITAU_invoice_op";
+            }
+            
 	    	var params = {
     			type : "POST",
     			async : true,
     			url: urlContingencia,
 	    		dataType: "json",
 	    		data: {
-		    			'secao': 'Cartoes:MinhaFatura',
-		    			'item': ''
+		    			'secao': 'Cartoes',
+		    			'item': 'Home'
 		    		},
 	    		headers: {
 	    			ajaxRequest : true,
@@ -23,50 +456,39 @@
 	                'Content-Type': 'application/x-www-form-urlencoded'
 	    		}
 	    	};
-
+	    	
 	    	var populaCartao = function(data) {
 				var listaCartao = [];
     			for( var i = 0; i < data.length; i++ ) {
     				var objeto = data[i];
-
+    				
     				if( objeto.customizacao != null ) {
-
+	    				
     					var cartao = self.montarCartao(objeto);
-    					if(i == self.indexCartaoInicial){
-    						cartao = self.popularDadosCompletos(objeto, cartao);
+    					cartao = self.popularDadosCompletos(objeto, cartao);
+    					if(i == 0){
+    						cartao.cardExpanded = true;
     					}
 	    				listaCartao.push(cartao);
     				}
     			}
     			self.cartoes = listaCartao;
-    			if(self.segmento !== "PRIVATE") {
-					self.cartoes.push({
-						"custom": "cartao--clean",
-						"titulo": "solicitar novo cart&atilde;o"
-					});
-    			}
-				self.qtdCartoes = self.cartoes.length;
+    			self.qtdCartoes = self.cartoes.length;
     			$scope.$apply();
 	    	}
-
+	    	
 	    	var initModal = function(){
 	    		$("#modal-debito-automatico").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
 	    		$("#modal-nao-gerido").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
 	    		$("#modal-programa-pontos").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
 	    		$("#modal-nao-cadastrado").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
-	    		$("#modal-nao-elegivel").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
 	    		$("#modal-pontos-indisponivel").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
-	    		$("#modal-detalhes-saldo").on("hidden.bs.modal", self.enviarAdobeRetornoModal);
 	    	}
-
+	    	
 	    	$.ajax(params)
 	    	.success(function(response) {
 	    		self.adobe = response.object.adobe;
-	    		self.likertObj = {
-	    	            'key': 'likert_fatura_pyitau',
-	    	            'value': self.adobe.visitor.iDPF
-	    	        }
-
+	    		tagPaginaCategoria(response.object);
     			populaCartao(response.object.data);
     			initModal();
 	    	})
@@ -74,4 +496,36 @@
     			console.log(response);
 	    	});
 	    }
+	    
+	    self.initWithError = function() {
+	    	let data = {
+        			'item': 'Cartoes:Home:ErroCarregamentoDashboard',
+        			'evento': 'erro',
+        	}
+        	
+        	self.enviarAdobe(data, null, pageLoadAdobe, function(response){console.log(response);});
+	    }
+	    
+	}]);
+	
+	var initPage = function() {	
+		try {
+			var loadedModules = typeof(angular.module('CpvCartaoModule')) == "object" ;
+			
+			if ( loadedModules ) {
+				angular.element(document).ready(function(){
+				    angular.bootstrap($('#containerApp'), ['app']);	   
+				});
+			} else {
+				setTimeout(initPage, 50);
+			}
+		} catch (err) {
+			setTimeout(initPage, 50);
+			
+		}
+	}
+	
+	$(document).ready(function(){
+		initPage();
+	})
 </script>
