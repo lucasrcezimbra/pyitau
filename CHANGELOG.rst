@@ -4,10 +4,17 @@ Changelog
 
 (unreleased)
 ------------------
-* Add support for accounts with multiple holders. Thanks to `@ivancrneto`_
+* Add support for multiple cards `#205`_ and `#209`_. Thanks to `@ivancrneto`_
+* Fix credit card statements `#205`_ and `#209`_. Thanks to `@ivancrneto`_
+* Add support for multiple holders `#204`_ and `#207`_. Thanks to `@ivancrneto`_
 * Fix pre-commit hooks
+* Add ruff and black as pre-commit hooks
 
 .. _`@ivancrneto`: https://github.com/ivancrneto
+.. _`#204`: https://github.com/lucasrcezimbra/pyitau/pull/204
+.. _`#205`: https://github.com/lucasrcezimbra/pyitau/pull/205
+.. _`#207`: https://github.com/lucasrcezimbra/pyitau/pull/207
+.. _`#209`: https://github.com/lucasrcezimbra/pyitau/pull/209
 
 
 1.2.2 (2023-03-12)
