@@ -29,7 +29,7 @@ class FirstRouter(TextPage):
         """
         Token de autenticação utilizado como cookie nas próximas requisições
         """
-        return re.search("authToken=\\'(.*?)\\';", self._text).group(1)
+        return re.search(r"authToken=\'(.*?)\';", self._text).group(1)
 
     @property
     def client_id(self):
@@ -37,7 +37,7 @@ class FirstRouter(TextPage):
 
     @property
     def flow_id(self):
-        return re.search("var flowId='(.*)';", self._text).group(1)
+        return re.search(r"var flowId='(.*)';", self._text).group(1)
 
     @property
     def secapdk(self):
@@ -66,11 +66,11 @@ class SecondRouter(TextPage):
 
     @property
     def op_sign_command(self):
-        return re.search('__opSignCommand = "(.*?)";', self._text).group(1)
+        return re.search(r'__opSignCommand = "(.*?)";', self._text).group(1)
 
     @property
     def op_maquina_pirata(self):
-        return re.search('__opMaquinaPirata = "(.*?)";', self._text).group(1)
+        return re.search(r'__opMaquinaPirata = "(.*?)";', self._text).group(1)
 
     @property
     def guardiao_cb(self):
@@ -240,18 +240,18 @@ class CheckingAccountFullStatement(TextPage):
     @property
     def filter_statements_by_period_op(self):
         pattern = (
-            "function consultarLancamentosPorPeriodo.*"
-            '"periodoConsulta" : parametrosPeriodo.*?'
-            'url = "(.*?)";'
+            r"function consultarLancamentosPorPeriodo.*"
+            r'"periodoConsulta" : parametrosPeriodo.*?'
+            r'url = "(.*?)";'
         )
         return re.search(pattern, self._text, flags=re.DOTALL).group(1)
 
     @property
     def filter_statements_by_month_op(self):
         pattern = (
-            "function consultarLancamentosPorPeriodo.*"
-            '"mesCompleto" : parametrosPeriodo.*?'
-            'url = "(.*?)";'
+            r"function consultarLancamentosPorPeriodo.*"
+            r'"mesCompleto" : parametrosPeriodo.*?'
+            r'url = "(.*?)";'
         )
         return re.search(pattern, self._text, flags=re.DOTALL).group(1)
 
