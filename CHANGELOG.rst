@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-(unreleased)
+1.3.0 (2023-08-23)
 ------------------
 * Add support for multiple cards `#205`_ and `#209`_. Thanks to `@ivancrneto`_
 * Fix credit card statements `#205`_ and `#209`_. Thanks to `@ivancrneto`_
