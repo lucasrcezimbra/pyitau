@@ -1,16 +1,16 @@
 import pytest
 from bs4 import BeautifulSoup
 
-from pyitau.pages import PasswordPage
+from pyitau.pages import Password
 
 
 @pytest.fixture
 def page(response_authenticate8):
-    return PasswordPage(response_authenticate8)
+    return Password(response_authenticate8)
 
 
 def test_init(response_authenticate8):
-    page = PasswordPage(response_authenticate8)
+    page = Password(response_authenticate8)
     assert page._soup == BeautifulSoup(response_authenticate8, features="html.parser")
 
 
@@ -23,7 +23,7 @@ def test_get_keys(page):
 
 
 def test_password_mapper(page):
-    page = PasswordPage(
+    page = Password(
         """
 <div class="teclado clearfix">
     <div class="teclas clearfix">
@@ -51,7 +51,7 @@ def test_password_mapper(page):
 
 
 def test_letter_password(page):
-    page = PasswordPage(
+    page = Password(
         """
 <div class="teclado clearfix">
     <div class="teclas clearfix">

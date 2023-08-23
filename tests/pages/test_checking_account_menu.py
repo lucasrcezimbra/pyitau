@@ -1,15 +1,15 @@
 import pytest
 
-from pyitau.pages import CheckingAccountMenu
+from pyitau.pages import CheckingAccount
 
 
 @pytest.fixture
 def page(response_checking_account_menu):
-    return CheckingAccountMenu(response_checking_account_menu)
+    return CheckingAccount(response_checking_account_menu)
 
 
 def test_init(response_checking_account_menu):
-    page = CheckingAccountMenu(response_checking_account_menu)
+    page = CheckingAccount(response_checking_account_menu)
     assert page._text == response_checking_account_menu
 
 

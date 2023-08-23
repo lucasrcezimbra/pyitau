@@ -7,6 +7,7 @@ Changelog
 * Add support for multiple cards `#205`_ and `#209`_. Thanks to `@ivancrneto`_
 * Fix credit card statements `#205`_ and `#209`_. Thanks to `@ivancrneto`_
 * Add support for multiple holders `#204`_ and `#207`_. Thanks to `@ivancrneto`_
+* Rename pages removing Page
 * Fix pre-commit hooks
 * Add ruff and black as pre-commit hooks
 

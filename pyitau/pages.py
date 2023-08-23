@@ -17,7 +17,7 @@ class SoupPage(TextPage):
         self._soup = BeautifulSoup(self._text, features="html.parser")
 
 
-class FirstRouterPage(TextPage):
+class FirstRouter(TextPage):
     """
     Primeira página após enviar o formulário de Agência e Conta.
     Utilizada para extrair do HTML informações que serão necessárias nas
@@ -57,7 +57,7 @@ class FirstRouterPage(TextPage):
         return re.search(pattern, self._text).group(1)
 
 
-class SecondRouterPage(TextPage):
+class SecondRouter(TextPage):
     """
     Segunda página após enviar o formulário de Agência e Conta.
     Também utilizada para extrair do HTML informações que serão necessárias nas
@@ -80,7 +80,7 @@ class SecondRouterPage(TextPage):
         ).group(1)
 
 
-class ThirdRouterPage(SoupPage):
+class ThirdRouter(SoupPage):
     """
     Página com escolha do titular caso a conta tenha mais de um titular.
     """
@@ -117,7 +117,7 @@ class ThirdRouterPage(SoupPage):
             return (name, id)
 
 
-class PasswordPage(SoupPage):
+class Password(SoupPage):
     """
     Página do teclado da senha. Contém 2 dígitos por botão.
     Por baixo dos panos cada botão representa uma letra.
@@ -163,7 +163,7 @@ class PasswordPage(SoupPage):
         return "".join(mapper[n] for n in password)
 
 
-class AuthenticatedHomePage(SoupPage):
+class AuthenticatedHome(SoupPage):
     """
     Primeira página após o login
     """
@@ -184,7 +184,7 @@ class AuthenticatedHomePage(SoupPage):
         ).group(1)
 
 
-class MenuPage(TextPage):
+class Menu(TextPage):
     @property
     def checking_cards_op(self):
         return re.search(
@@ -202,13 +202,13 @@ class MenuPage(TextPage):
         ).group(2)
 
 
-class CheckingAccountMenu(TextPage):
+class CheckingAccount(TextPage):
     @property
     def statements_op(self):
         return re.search(r'url : "(.*)"', self._text).group(1)
 
 
-class CheckingCardsMenu(TextPage):
+class CheckingCards(TextPage):
     @property
     def cards_op(self):
         return re.search(
@@ -218,7 +218,7 @@ class CheckingCardsMenu(TextPage):
         ).group(1)
 
 
-class CheckingAccountStatementsPage(SoupPage):
+class CheckingAccountStatements(SoupPage):
     @property
     def full_statement_op(self):
         return self._soup.find("a").attrs["data-op"]

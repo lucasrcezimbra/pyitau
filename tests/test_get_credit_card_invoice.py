@@ -4,7 +4,7 @@ import pytest
 import responses
 
 from pyitau.main import ROUTER_URL
-from pyitau.pages import AuthenticatedHomePage, CardDetails, MenuPage
+from pyitau.pages import AuthenticatedHome, CardDetails, Menu
 
 
 @pytest.fixture
@@ -40,12 +40,12 @@ def response_checking_card_menu():
 
 @pytest.fixture
 def authenticated_home_page(response_authenticated_home):
-    return AuthenticatedHomePage(response_authenticated_home)
+    return AuthenticatedHome(response_authenticated_home)
 
 
 @pytest.fixture
 def menu_page(response_menu):
-    return MenuPage(response_menu)
+    return Menu(response_menu)
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 
-from pyitau.pages import AuthenticatedHomePage
+from pyitau.pages import AuthenticatedHome
 
 
 @pytest.fixture
@@ -11,11 +11,11 @@ def response(response_authenticated_home):
 
 @pytest.fixture
 def page(response):
-    return AuthenticatedHomePage(response)
+    return AuthenticatedHome(response)
 
 
 def test_init(response):
-    page = AuthenticatedHomePage(response)
+    page = AuthenticatedHome(response)
     assert page._soup == BeautifulSoup(response, features="html.parser")
 
 

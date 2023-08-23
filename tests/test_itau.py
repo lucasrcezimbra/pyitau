@@ -4,11 +4,11 @@ import responses
 
 from pyitau.main import ROUTER_URL, Itau
 from pyitau.pages import (
-    AuthenticatedHomePage,
+    AuthenticatedHome,
+    CheckingAccount,
     CheckingAccountFullStatement,
-    CheckingAccountMenu,
-    CheckingAccountStatementsPage,
-    MenuPage,
+    CheckingAccountStatements,
+    Menu,
 )
 
 
@@ -19,22 +19,22 @@ def itau():
 
 @pytest.fixture
 def authenticated_home_page(response_authenticated_home):
-    return AuthenticatedHomePage(response_authenticated_home)
+    return AuthenticatedHome(response_authenticated_home)
 
 
 @pytest.fixture
 def menu_page(response_menu):
-    return MenuPage(response_menu)
+    return Menu(response_menu)
 
 
 @pytest.fixture
 def checking_menu_page(response_checking_account_menu):
-    return CheckingAccountMenu(response_checking_account_menu)
+    return CheckingAccount(response_checking_account_menu)
 
 
 @pytest.fixture
 def checking_statements_page(response_checking_statements):
-    return CheckingAccountStatementsPage(response_checking_statements)
+    return CheckingAccountStatements(response_checking_statements)
 
 
 def test_init():
@@ -72,8 +72,8 @@ def test_menu_page(authenticated_home_page, itau, response_menu):
         ],
     )
 
-    assert itau._menu_page == MenuPage(response_menu)
-    assert itau._menu_page == MenuPage(response_menu)
+    assert itau._menu_page == Menu(response_menu)
+    assert itau._menu_page == Menu(response_menu)
 
     assert request1.call_count == 1
     assert request2.call_count == 1
@@ -91,12 +91,8 @@ def test_checking_menu_page(menu_page, itau, response_checking_account_menu):
         ],
     )
 
-    assert itau._checking_menu_page == CheckingAccountMenu(
-        response_checking_account_menu
-    )
-    assert itau._checking_menu_page == CheckingAccountMenu(
-        response_checking_account_menu
-    )
+    assert itau._checking_menu_page == CheckingAccount(response_checking_account_menu)
+    assert itau._checking_menu_page == CheckingAccount(response_checking_account_menu)
 
     assert request.call_count == 1
 
@@ -115,7 +111,7 @@ def test_checking_statements_page(
         ],
     )
 
-    expected_page = CheckingAccountStatementsPage(response_checking_statements)
+    expected_page = CheckingAccountStatements(response_checking_statements)
 
     assert itau._checking_statements_page == expected_page
     assert itau._checking_statements_page == expected_page

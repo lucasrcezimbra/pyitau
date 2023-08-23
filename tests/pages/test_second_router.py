@@ -1,15 +1,15 @@
 import pytest
 
-from pyitau.pages import SecondRouterPage
+from pyitau.pages import SecondRouter
 
 
 @pytest.fixture
 def page(response_authenticate5):
-    return SecondRouterPage(response_authenticate5)
+    return SecondRouter(response_authenticate5)
 
 
 def test_init(response_authenticate5):
-    page = SecondRouterPage(response_authenticate5)
+    page = SecondRouter(response_authenticate5)
     assert page._text == response_authenticate5
 
 

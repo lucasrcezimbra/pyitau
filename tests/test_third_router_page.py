@@ -1,16 +1,16 @@
 import pytest
 from bs4 import BeautifulSoup
 
-from pyitau.pages import ThirdRouterPage
+from pyitau.pages import ThirdRouter
 
 
 @pytest.fixture
 def page(response_third_router_page):
-    return ThirdRouterPage(response_third_router_page)
+    return ThirdRouter(response_third_router_page)
 
 
 def test_init(response_third_router_page):
-    page = ThirdRouterPage(response_third_router_page)
+    page = ThirdRouter(response_third_router_page)
     assert page._soup == BeautifulSoup(
         response_third_router_page, features="html.parser"
     )

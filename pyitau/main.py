@@ -1,18 +1,7 @@
 import requests
 from cached_property import cached_property
 
-from pyitau.pages import (
-    AuthenticatedHomePage,
-    CardDetails,
-    CheckingAccountFullStatement,
-    CheckingAccountMenu,
-    CheckingAccountStatementsPage,
-    FirstRouterPage,
-    MenuPage,
-    PasswordPage,
-    SecondRouterPage,
-    ThirdRouterPage,
-)
+from pyitau import pages
 
 ROUTER_URL = "https://internetpf5.itau.com.br/router-app/router"
 
@@ -57,7 +46,7 @@ class Itau:
                 "X-Requested-With": "XMLHttpRequest",
             },
         )
-        card_details = CardDetails(response.text)
+        card_details = pages.CardDetails(response.text)
 
         response = self._session.post(
             ROUTER_URL,
@@ -126,7 +115,7 @@ class Itau:
             "destino": "",
         }
         response = self._session.post(ROUTER_URL, data=data)
-        page = FirstRouterPage(response.text)
+        page = pages.FirstRouter(response.text)
         self._session.cookies.set("X-AUTH-TOKEN", page.auth_token)
         self._op2 = page.secapdk
         self._op3 = page.secbcatch
@@ -152,7 +141,7 @@ class Itau:
     def _authenticate5(self):
         headers = {"op": self._op4}
         response = self._session.post(ROUTER_URL, headers=headers)
-        page = SecondRouterPage(response.text)
+        page = pages.SecondRouter(response.text)
         self._op5 = page.op_sign_command
         self._op6 = page.op_maquina_pirata
         self._op7 = page.guardiao_cb
@@ -169,7 +158,7 @@ class Itau:
         headers = {"op": self._op7}
         response = self._session.post(ROUTER_URL, headers=headers)
 
-        page = ThirdRouterPage(response.text)
+        page = pages.ThirdRouter(response.text)
         if self.holder_name and page.has_account_holders_form:
             holders_op = page.op
             holder, holder_index = page.find_account_holder(self.holder_name)
@@ -186,7 +175,7 @@ class Itau:
             headers = {"op": self._op7}
             response = self._session.post(ROUTER_URL, headers=headers)
 
-        page = PasswordPage(response.text)
+        page = pages.Password(response.text)
         self._letter_password = page.letter_password(self.password)
         self._op8 = page.op
 
@@ -195,7 +184,7 @@ class Itau:
         data = {"op": self._op8, "senha": self._letter_password}
 
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
-        self._home = AuthenticatedHomePage(response.text)
+        self._home = pages.AuthenticatedHome(response.text)
 
     @cached_property
     def _menu_page(self):
@@ -203,21 +192,21 @@ class Itau:
             ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"}
         )
         response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
-        return MenuPage(response.text)
+        return pages.Menu(response.text)
 
     @cached_property
     def _checking_menu_page(self):
         response = self._session.post(
             ROUTER_URL, headers={"op": self._menu_page.checking_account_op}
         )
-        return CheckingAccountMenu(response.text)
+        return pages.CheckingAccount(response.text)
 
     @cached_property
     def _checking_statements_page(self):
         response = self._session.post(
             ROUTER_URL, headers={"op": self._checking_menu_page.statements_op}
         )
-        return CheckingAccountStatementsPage(response.text)
+        return pages.CheckingAccountStatements(response.text)
 
     @cached_property
     def _checking_full_statement_page(self):
@@ -225,4 +214,4 @@ class Itau:
             ROUTER_URL,
             headers={"op": self._checking_statements_page.full_statement_op},
         )
-        return CheckingAccountFullStatement(response.text)
+        return pages.CheckingAccountFullStatement(response.text)
