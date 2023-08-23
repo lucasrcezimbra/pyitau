@@ -71,7 +71,9 @@ def test_get_credit_card_invoice(
         responses.POST,
         ROUTER_URL,
         body=response_menu,
-        match=[responses.matchers.header_matcher({"op": authenticated_home_page.menu_op})],
+        match=[
+            responses.matchers.header_matcher({"op": authenticated_home_page.menu_op})
+        ],
     )
 
     responses.add(
@@ -79,12 +81,14 @@ def test_get_credit_card_invoice(
         ROUTER_URL,
         body=response_card_details,
         match=[
-            responses.matchers.header_matcher({
-                "op": menu_page.checking_cards_op,
-                "X-FLOW-ID": itau._flow_id,
-                "X-CLIENT-ID": itau._client_id,
-                "X-Requested-With": "XMLHttpRequest",
-            })
+            responses.matchers.header_matcher(
+                {
+                    "op": menu_page.checking_cards_op,
+                    "X-FLOW-ID": itau._flow_id,
+                    "X-CLIENT-ID": itau._client_id,
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            )
         ],
     )
 
@@ -103,13 +107,13 @@ def test_get_credit_card_invoice(
     responses.add(
         responses.POST,
         ROUTER_URL,
-        body='',
+        body="",
         match=[
             responses.matchers.header_matcher({"op": card_details_page.invoice_op}),
             responses.matchers.urlencoded_params_matcher(
                 {"secao": "Cartoes:MinhaFatura", "item": ""}
             ),
-        ]
+        ],
     )
 
     responses.add(
@@ -126,12 +130,15 @@ def test_get_credit_card_invoice(
             ROUTER_URL, headers={"op": authenticated_home_page.op, "segmento": "VAREJO"}
         ),
         call(ROUTER_URL, headers={"op": authenticated_home_page.menu_op}),
-        call(ROUTER_URL, headers={
-            "op": menu_page.checking_cards_op,
-            "X-FLOW-ID": itau._flow_id,
-            "X-CLIENT-ID": itau._client_id,
-            "X-Requested-With": "XMLHttpRequest",
-        }),
+        call(
+            ROUTER_URL,
+            headers={
+                "op": menu_page.checking_cards_op,
+                "X-FLOW-ID": itau._flow_id,
+                "X-CLIENT-ID": itau._client_id,
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        ),
         call(
             ROUTER_URL,
             headers={"op": card_details_page.invoice_op},
@@ -145,7 +152,7 @@ def test_get_credit_card_invoice(
         call(
             ROUTER_URL,
             headers={"op": card_details_page.full_statement_op},
-            data='PYITAU_CARD_ID',
+            data="PYITAU_CARD_ID",
         ),
     ]
     post_spy.assert_has_calls(calls)

@@ -14,12 +14,12 @@ def test_init(response_authenticate5):
 
 
 def test_op_sign_command(page):
-    assert page.op_sign_command == 'PYITAU_OP5'
+    assert page.op_sign_command == "PYITAU_OP5"
 
 
 def test_op_maquina_pirata(page):
-    assert page.op_maquina_pirata == 'PYITAU_OP6'
+    assert page.op_maquina_pirata == "PYITAU_OP6"
 
 
 def test_guardiao_cb(page):
-    assert page.guardiao_cb == 'PYITAU_OP7'
+    assert page.guardiao_cb == "PYITAU_OP7"

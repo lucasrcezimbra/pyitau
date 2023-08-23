@@ -3,14 +3,18 @@ import requests
 import responses
 
 from pyitau.main import ROUTER_URL, Itau
-from pyitau.pages import (AuthenticatedHomePage, CheckingAccountFullStatement,
-                          CheckingAccountMenu, CheckingAccountStatementsPage,
-                          MenuPage)
+from pyitau.pages import (
+    AuthenticatedHomePage,
+    CheckingAccountFullStatement,
+    CheckingAccountMenu,
+    CheckingAccountStatementsPage,
+    MenuPage,
+)
 
 
 @pytest.fixture
 def itau():
-    return Itau('0000', '12345', '6', '123456')
+    return Itau("0000", "12345", "6", "123456")
 
 
 @pytest.fixture
@@ -34,10 +38,10 @@ def checking_statements_page(response_checking_statements):
 
 
 def test_init():
-    agency = '0000'
-    account = '12345'
-    account_digit = '6'
-    password = '123456'
+    agency = "0000"
+    account = "12345"
+    account_digit = "6"
+    password = "123456"
 
     itau = Itau(agency, account, account_digit, password)
 
@@ -53,7 +57,7 @@ def test_menu_page(authenticated_home_page, itau, response_menu):
     itau._home = authenticated_home_page
     request1 = responses.post(
         ROUTER_URL,
-        body='',
+        body="",
         match=[
             responses.matchers.header_matcher(
                 {"op": authenticated_home_page.op, "segmento": "VAREJO"}
@@ -64,9 +68,7 @@ def test_menu_page(authenticated_home_page, itau, response_menu):
         ROUTER_URL,
         body=response_menu,
         match=[
-            responses.matchers.header_matcher(
-                {"op": authenticated_home_page.menu_op}
-            )
+            responses.matchers.header_matcher({"op": authenticated_home_page.menu_op})
         ],
     )
 
@@ -85,29 +87,31 @@ def test_checking_menu_page(menu_page, itau, response_checking_account_menu):
         ROUTER_URL,
         body=response_checking_account_menu,
         match=[
-            responses.matchers.header_matcher(
-                {"op": menu_page.checking_account_op}
-            )
+            responses.matchers.header_matcher({"op": menu_page.checking_account_op})
         ],
     )
 
-    assert itau._checking_menu_page == CheckingAccountMenu(response_checking_account_menu)
-    assert itau._checking_menu_page == CheckingAccountMenu(response_checking_account_menu)
+    assert itau._checking_menu_page == CheckingAccountMenu(
+        response_checking_account_menu
+    )
+    assert itau._checking_menu_page == CheckingAccountMenu(
+        response_checking_account_menu
+    )
 
     assert request.call_count == 1
 
 
 @responses.activate
-def test_checking_statements_page(checking_menu_page, itau, response_checking_statements):
+def test_checking_statements_page(
+    checking_menu_page, itau, response_checking_statements
+):
     itau._checking_menu_page = checking_menu_page
 
     request = responses.post(
         ROUTER_URL,
         body=response_checking_statements,
         match=[
-            responses.matchers.header_matcher(
-                {"op": checking_menu_page.statements_op}
-            )
+            responses.matchers.header_matcher({"op": checking_menu_page.statements_op})
         ],
     )
 

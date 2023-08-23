@@ -5,7 +5,7 @@ from pyitau.pages import CheckingCardsMenu
 
 @pytest.fixture()
 def response():
-    return '''
+    return """
     <script>
         $(".accordion-box-cartoes").itauAccordion();
         function carregarBoxCartoes() {
@@ -31,7 +31,7 @@ def response():
             adobeDataLayer.sendDataLayer();
         }
     </script>
-    '''
+    """
 
 
 def test_init(response):
@@ -41,4 +41,4 @@ def test_init(response):
 
 def test_op(response):
     page = CheckingCardsMenu(response)
-    assert page.cards_op == 'PYITAU_CONTEUDO_BOX_CARTOES_OP'
+    assert page.cards_op == "PYITAU_CONTEUDO_BOX_CARTOES_OP"

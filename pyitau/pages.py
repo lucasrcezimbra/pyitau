@@ -14,7 +14,7 @@ class TextPage:
 class SoupPage(TextPage):
     def __init__(self, response_text):
         super().__init__(response_text)
-        self._soup = BeautifulSoup(self._text, features='html.parser')
+        self._soup = BeautifulSoup(self._text, features="html.parser")
 
 
 class FirstRouterPage(TextPage):
@@ -23,6 +23,7 @@ class FirstRouterPage(TextPage):
     Utilizada para extrair do HTML informações que serão necessárias nas
     próximas requisições.
     """
+
     @property
     def auth_token(self):
         """
@@ -36,15 +37,19 @@ class FirstRouterPage(TextPage):
 
     @property
     def flow_id(self):
-        return re.search("var flowId=\'(.*)\';", self._text).group(1)
+        return re.search("var flowId='(.*)';", self._text).group(1)
 
     @property
     def secapdk(self):
-        return re.search(r"\$SECAPDK[\n\r\t\s]*.uidap\(\'(.*?)\'\);", self._text).group(1)
+        return re.search(r"\$SECAPDK[\n\r\t\s]*.uidap\(\'(.*?)\'\);", self._text).group(
+            1
+        )
 
     @property
     def secbcatch(self):
-        return re.search(r"\$SECBCATCH[\n\r\t\s]*.uidap\(\'(.*)\'\);", self._text).group(1)
+        return re.search(
+            r"\$SECBCATCH[\n\r\t\s]*.uidap\(\'(.*)\'\);", self._text
+        ).group(1)
 
     @property
     def perform_request(self):
@@ -58,6 +63,7 @@ class SecondRouterPage(TextPage):
     Também utilizada para extrair do HTML informações que serão necessárias nas
     próximas requisições.
     """
+
     @property
     def op_sign_command(self):
         return re.search('__opSignCommand = "(.*?)";', self._text).group(1)
@@ -69,8 +75,8 @@ class SecondRouterPage(TextPage):
     @property
     def guardiao_cb(self):
         return re.search(
-            r'var guardiao_cb = function\(\) {\n\t\t\tloadPage\(\'(.*?)\'\);',
-            self._text
+            r"var guardiao_cb = function\(\) {\n\t\t\tloadPage\(\'(.*?)\'\);",
+            self._text,
         ).group(1)
 
 
@@ -117,12 +123,13 @@ class PasswordPage(SoupPage):
     Por baixo dos panos cada botão representa uma letra.
     A combinação das letras deve ser enviada na próxima requisição.
     """
+
     @property
     def op(self):
         """
         Campo op do formulário de senha
         """
-        return self._soup.find('input', id='op').attrs['value']
+        return self._soup.find("input", id="op").attrs["value"]
 
     def _get_keys(self):
         """
@@ -130,9 +137,9 @@ class PasswordPage(SoupPage):
         o teclado da senha. Cada botão tem 2 dígitos e é representado por 1 letra.
         Dígitos e letras mudam a cada tentativa de login.
         """
-        div_teclado = self._soup.find(class_='teclado')
-        div_teclas = div_teclado.find(class_='teclas')
-        return div_teclas.findAll(class_='campoTeclado')
+        div_teclado = self._soup.find(class_="teclado")
+        div_teclas = div_teclado.find(class_="teclas")
+        return div_teclas.findAll(class_="campoTeclado")
 
     def _get_password_mapper(self):
         """
@@ -141,8 +148,8 @@ class PasswordPage(SoupPage):
         mapper = {}
 
         for key in self._get_keys():
-            numbers = key.attrs['aria-label'].split(' ou ')
-            letter = key.attrs['rel'][0].replace('tecla_', '')
+            numbers = key.attrs["aria-label"].split(" ou ")
+            letter = key.attrs["rel"][0].replace("tecla_", "")
             mapper[numbers[0]] = letter
             mapper[numbers[1]] = letter
 
@@ -153,16 +160,17 @@ class PasswordPage(SoupPage):
         Recebe senha de número e retorna em letras do teclado da senha.
         """
         mapper = self._get_password_mapper()
-        return ''.join(mapper[n] for n in password)
+        return "".join(mapper[n] for n in password)
 
 
 class AuthenticatedHomePage(SoupPage):
     """
     Primeira página após o login
     """
+
     @property
     def op(self):
-        return self._soup.find('div', class_='logo left').find('a').attrs['data-op']
+        return self._soup.find("div", class_="logo left").find("a").attrs["data-op"]
 
     @property
     def menu_op(self):
@@ -213,34 +221,38 @@ class CheckingCardsMenu(TextPage):
 class CheckingAccountStatementsPage(SoupPage):
     @property
     def full_statement_op(self):
-        return self._soup.find('a').attrs['data-op']
+        return self._soup.find("a").attrs["data-op"]
 
 
 class CardsPage(SoupPage):
     @property
     def card_details_op(self):
-        form_invoice = self._soup.find('form', id='formVerFaturaRedesenho')
-        return form_invoice.find('input', {'name': 'op'}).attrs['data-op']
+        form_invoice = self._soup.find("form", id="formVerFaturaRedesenho")
+        return form_invoice.find("input", {"name": "op"}).attrs["data-op"]
 
     @property
     def first_card_id(self):
-        form_invoice = self._soup.find('form', id='formVerFaturaRedesenho')
-        return form_invoice.find('input', {'name': 'idCartao'}).attrs['value']
+        form_invoice = self._soup.find("form", id="formVerFaturaRedesenho")
+        return form_invoice.find("input", {"name": "idCartao"}).attrs["value"]
 
 
 class CheckingAccountFullStatement(TextPage):
     @property
     def filter_statements_by_period_op(self):
-        pattern = 'function consultarLancamentosPorPeriodo.*' \
-                  '"periodoConsulta" : parametrosPeriodo.*?' \
-                  'url = "(.*?)";'
+        pattern = (
+            "function consultarLancamentosPorPeriodo.*"
+            '"periodoConsulta" : parametrosPeriodo.*?'
+            'url = "(.*?)";'
+        )
         return re.search(pattern, self._text, flags=re.DOTALL).group(1)
 
     @property
     def filter_statements_by_month_op(self):
-        pattern = 'function consultarLancamentosPorPeriodo.*' \
-                  '"mesCompleto" : parametrosPeriodo.*?' \
-                  'url = "(.*?)";'
+        pattern = (
+            "function consultarLancamentosPorPeriodo.*"
+            '"mesCompleto" : parametrosPeriodo.*?'
+            'url = "(.*?)";'
+        )
         return re.search(pattern, self._text, flags=re.DOTALL).group(1)
 
 

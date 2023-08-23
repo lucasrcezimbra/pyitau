@@ -14,8 +14,8 @@ def test_init(response_cards_page: str):
 
 
 def test_card_id(cards_page: CardsPage):
-    assert cards_page.first_card_id == 'PYITAU_CARD_ID'
+    assert cards_page.first_card_id == "PYITAU_CARD_ID"
 
 
 def test_card_op(cards_page: CardsPage):
-    assert cards_page.card_details_op == 'PYITAU_FATURA_REDESENHO_OP'
+    assert cards_page.card_details_op == "PYITAU_FATURA_REDESENHO_OP"

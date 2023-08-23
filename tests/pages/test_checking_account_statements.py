@@ -11,8 +11,10 @@ def page(response_checking_statements):
 
 def test_init(response_checking_statements):
     page = CheckingAccountStatementsPage(response_checking_statements)
-    assert page._soup == BeautifulSoup(response_checking_statements, features='html.parser')
+    assert page._soup == BeautifulSoup(
+        response_checking_statements, features="html.parser"
+    )
 
 
 def test_statements_op(page):
-    assert page.full_statement_op == 'PYITAU_OP_statements_by_period'
+    assert page.full_statement_op == "PYITAU_OP_statements_by_period"

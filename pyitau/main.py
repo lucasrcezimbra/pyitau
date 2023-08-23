@@ -1,13 +1,20 @@
 import requests
 from cached_property import cached_property
 
-from pyitau.pages import (AuthenticatedHomePage, CardDetails,
-                          CheckingAccountFullStatement, CheckingAccountMenu,
-                          CheckingAccountStatementsPage, FirstRouterPage,
-                          MenuPage, PasswordPage, SecondRouterPage,
-                          ThirdRouterPage)
+from pyitau.pages import (
+    AuthenticatedHomePage,
+    CardDetails,
+    CheckingAccountFullStatement,
+    CheckingAccountMenu,
+    CheckingAccountStatementsPage,
+    FirstRouterPage,
+    MenuPage,
+    PasswordPage,
+    SecondRouterPage,
+    ThirdRouterPage,
+)
 
-ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
+ROUTER_URL = "https://internetpf5.itau.com.br/router-app/router"
 
 
 class Itau:
@@ -20,10 +27,10 @@ class Itau:
         self._session = requests.Session()
         self._session.headers = {
             **self._session.headers,
-            'User-Agent': (
-                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-                '(KHTML, like Gecko) Ubuntu Chromium/72.0.3626.121 '
-                'Chrome/72.0.3626.121 Safari/537.36'
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Ubuntu Chromium/72.0.3626.121 "
+                "Chrome/72.0.3626.121 Safari/537.36"
             ),
         }
 
@@ -41,12 +48,15 @@ class Itau:
         """
         Get and return the credit card invoice.
         """
-        response = self._session.post(ROUTER_URL, headers={
-            "op": self._menu_page.checking_cards_op,
-            "X-FLOW-ID": self._flow_id,
-            "X-CLIENT-ID": self._client_id,
-            "X-Requested-With": "XMLHttpRequest",
-        })
+        response = self._session.post(
+            ROUTER_URL,
+            headers={
+                "op": self._menu_page.checking_cards_op,
+                "X-FLOW-ID": self._flow_id,
+                "X-CLIENT-ID": self._client_id,
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        )
         card_details = CardDetails(response.text)
 
         response = self._session.post(
@@ -63,9 +73,9 @@ class Itau:
         )
 
         if not card_name:
-            card_id = cards[0]['id']
+            card_id = cards[0]["id"]
         else:
-            card_id = next(c for c in cards if c['nome'] == card_name)['id']
+            card_id = next(c for c in cards if c["nome"] == card_name)["id"]
 
         response = self._session.post(
             ROUTER_URL, headers={"op": card_details.full_statement_op}, data=card_id
@@ -79,8 +89,10 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            data={'periodoConsulta': days},
-            headers={'op': self._checking_full_statement_page.filter_statements_by_period_op},
+            data={"periodoConsulta": days},
+            headers={
+                "op": self._checking_full_statement_page.filter_statements_by_period_op
+            },
         )
         return response.json()
 
@@ -96,24 +108,26 @@ class Itau:
 
         response = self._session.post(
             ROUTER_URL,
-            data={'mesCompleto': "%02d/%d" % (month, year)},
-            headers={'op': self._checking_full_statement_page.filter_statements_by_month_op},
+            data={"mesCompleto": "%02d/%d" % (month, year)},
+            headers={
+                "op": self._checking_full_statement_page.filter_statements_by_month_op
+            },
         )
         return response.json()
 
     def _authenticate2(self):
         data = {
-            'portal': '005',
-            'pre-login': 'pre-login',
-            'tipoLogon': '7',
-            'usuario.agencia': self.agency,
-            'usuario.conta': self.account,
-            'usuario.dac': self.account_digit,
-            'destino': '',
+            "portal": "005",
+            "pre-login": "pre-login",
+            "tipoLogon": "7",
+            "usuario.agencia": self.agency,
+            "usuario.conta": self.account,
+            "usuario.dac": self.account_digit,
+            "destino": "",
         }
         response = self._session.post(ROUTER_URL, data=data)
         page = FirstRouterPage(response.text)
-        self._session.cookies.set('X-AUTH-TOKEN', page.auth_token)
+        self._session.cookies.set("X-AUTH-TOKEN", page.auth_token)
         self._op2 = page.secapdk
         self._op3 = page.secbcatch
         self._op4 = page.perform_request
@@ -122,21 +136,21 @@ class Itau:
 
     def _authenticate3(self):
         headers = {
-            'op': self._op2,
-            'X-FLOW-ID': self._flow_id,
-            'X-CLIENT-ID': self._client_id,
-            'renderType': 'parcialPage',
-            'X-Requested-With': 'XMLHttpRequest',
+            "op": self._op2,
+            "X-FLOW-ID": self._flow_id,
+            "X-CLIENT-ID": self._client_id,
+            "renderType": "parcialPage",
+            "X-Requested-With": "XMLHttpRequest",
         }
 
         self._session.post(ROUTER_URL, headers=headers)
 
     def _authenticate4(self):
-        headers = {'op': self._op3}
+        headers = {"op": self._op3}
         self._session.post(ROUTER_URL, headers=headers)
 
     def _authenticate5(self):
-        headers = {'op': self._op4}
+        headers = {"op": self._op4}
         response = self._session.post(ROUTER_URL, headers=headers)
         page = SecondRouterPage(response.text)
         self._op5 = page.op_sign_command
@@ -144,15 +158,15 @@ class Itau:
         self._op7 = page.guardiao_cb
 
     def _authenticate6(self):
-        headers = {'op': self._op5}
+        headers = {"op": self._op5}
         self._session.post(ROUTER_URL, headers=headers)
 
     def _authenticate7(self):
-        headers = {'op': self._op6}
+        headers = {"op": self._op6}
         self._session.post(ROUTER_URL, headers=headers)
 
     def _authenticate8(self):
-        headers = {'op': self._op7}
+        headers = {"op": self._op7}
         response = self._session.post(ROUTER_URL, headers=headers)
 
         page = ThirdRouterPage(response.text)
@@ -177,34 +191,31 @@ class Itau:
         self._op8 = page.op
 
     def _authenticate9(self):
-        headers = {'op': self._op8}
-        data = {
-            'op': self._op8,
-            'senha': self._letter_password
-        }
+        headers = {"op": self._op8}
+        data = {"op": self._op8, "senha": self._letter_password}
 
         response = self._session.post(ROUTER_URL, headers=headers, data=data)
         self._home = AuthenticatedHomePage(response.text)
 
     @cached_property
     def _menu_page(self):
-        self._session.post(ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"})
+        self._session.post(
+            ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"}
+        )
         response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
         return MenuPage(response.text)
 
     @cached_property
     def _checking_menu_page(self):
         response = self._session.post(
-            ROUTER_URL,
-            headers={'op': self._menu_page.checking_account_op}
+            ROUTER_URL, headers={"op": self._menu_page.checking_account_op}
         )
         return CheckingAccountMenu(response.text)
 
     @cached_property
     def _checking_statements_page(self):
         response = self._session.post(
-            ROUTER_URL,
-            headers={'op': self._checking_menu_page.statements_op}
+            ROUTER_URL, headers={"op": self._checking_menu_page.statements_op}
         )
         return CheckingAccountStatementsPage(response.text)
 
@@ -212,6 +223,6 @@ class Itau:
     def _checking_full_statement_page(self):
         response = self._session.post(
             ROUTER_URL,
-            headers={'op': self._checking_statements_page.full_statement_op},
+            headers={"op": self._checking_statements_page.full_statement_op},
         )
         return CheckingAccountFullStatement(response.text)

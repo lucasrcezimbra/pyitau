@@ -11,16 +11,15 @@ def page(response_authenticate8):
 
 def test_init(response_authenticate8):
     page = PasswordPage(response_authenticate8)
-    assert page._soup == BeautifulSoup(response_authenticate8, features='html.parser')
+    assert page._soup == BeautifulSoup(response_authenticate8, features="html.parser")
 
 
 def test_get_keys(page):
     keys = page._get_keys()
     assert len(keys) == 5
-    assert keys == page._soup \
-        .find(class_='teclado') \
-        .find(class_='teclas') \
-        .findAll(class_='campoTeclado')
+    assert keys == page._soup.find(class_="teclado").find(class_="teclas").findAll(
+        class_="campoTeclado"
+    )
 
 
 def test_password_mapper(page):
@@ -38,16 +37,16 @@ def test_password_mapper(page):
         """
     )
     assert page._get_password_mapper() == {
-        '1': 'L',
-        '2': 'L',
-        '3': 'U',
-        '4': 'U',
-        '5': 'C',
-        '6': 'C',
-        '7': 'A',
-        '8': 'A',
-        '9': 'S',
-        '0': 'S',
+        "1": "L",
+        "2": "L",
+        "3": "U",
+        "4": "U",
+        "5": "C",
+        "6": "C",
+        "7": "A",
+        "8": "A",
+        "9": "S",
+        "0": "S",
     }
 
 
@@ -65,10 +64,10 @@ def test_letter_password(page):
 </div>
         """
     )
-    assert page.letter_password('123456') == 'LLUUCC'
-    assert page.letter_password('135790') == 'LUCASS'
-    assert page.letter_password('097531') == 'SSACUL'
+    assert page.letter_password("123456") == "LLUUCC"
+    assert page.letter_password("135790") == "LUCASS"
+    assert page.letter_password("097531") == "SSACUL"
 
 
 def test_op(page):
-    assert page.op == 'PYITAU_OP8'
+    assert page.op == "PYITAU_OP8"
