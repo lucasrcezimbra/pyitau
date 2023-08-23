@@ -4,7 +4,7 @@ import pytest
 import responses
 
 from pyitau.main import ROUTER_URL
-from pyitau.pages import AuthenticatedHomePage, CardDetails, Menu2Page
+from pyitau.pages import AuthenticatedHomePage, CardDetails, MenuPage
 
 
 @pytest.fixture
@@ -44,8 +44,8 @@ def authenticated_home_page(response_authenticated_home):
 
 
 @pytest.fixture
-def menu2_page(response_menu2):
-    return Menu2Page(response_menu2)
+def menu_page(response_menu):
+    return MenuPage(response_menu)
 
 
 @pytest.fixture
@@ -58,11 +58,10 @@ def test_get_credit_card_invoice(
     itau,
     mocker,
     authenticated_home_page,
-    menu2_page,
+    menu_page,
     card_details_page,
     response_card_details,
     response_menu,
-    response_menu2,
 ):
     itau._home = authenticated_home_page
     itau._flow_id = "PYITAU_FLOW_ID"
@@ -72,17 +71,6 @@ def test_get_credit_card_invoice(
         responses.POST,
         ROUTER_URL,
         body=response_menu,
-        match=[
-            responses.matchers.header_matcher(
-                {"op": authenticated_home_page.op, "segmento": "VAREJO"}
-            )
-        ],
-    )
-
-    responses.add(
-        responses.POST,
-        ROUTER_URL,
-        body=response_menu2,
         match=[responses.matchers.header_matcher({"op": authenticated_home_page.menu_op})],
     )
 
@@ -92,7 +80,7 @@ def test_get_credit_card_invoice(
         body=response_card_details,
         match=[
             responses.matchers.header_matcher({
-                "op": menu2_page.checking_cards_op,
+                "op": menu_page.checking_cards_op,
                 "X-FLOW-ID": itau._flow_id,
                 "X-CLIENT-ID": itau._client_id,
                 "X-Requested-With": "XMLHttpRequest",
@@ -139,7 +127,7 @@ def test_get_credit_card_invoice(
         ),
         call(ROUTER_URL, headers={"op": authenticated_home_page.menu_op}),
         call(ROUTER_URL, headers={
-            "op": menu2_page.checking_cards_op,
+            "op": menu_page.checking_cards_op,
             "X-FLOW-ID": itau._flow_id,
             "X-CLIENT-ID": itau._client_id,
             "X-Requested-With": "XMLHttpRequest",

@@ -51,12 +51,21 @@ def test_init():
 @responses.activate
 def test_menu_page(authenticated_home_page, itau, response_menu):
     itau._home = authenticated_home_page
-    request = responses.post(
+    request1 = responses.post(
+        ROUTER_URL,
+        body='',
+        match=[
+            responses.matchers.header_matcher(
+                {"op": authenticated_home_page.op, "segmento": "VAREJO"}
+            )
+        ],
+    )
+    request2 = responses.post(
         ROUTER_URL,
         body=response_menu,
         match=[
             responses.matchers.header_matcher(
-                {"op": authenticated_home_page.op, "segmento": "VAREJO"}
+                {"op": authenticated_home_page.menu_op}
             )
         ],
     )
@@ -64,7 +73,8 @@ def test_menu_page(authenticated_home_page, itau, response_menu):
     assert itau._menu_page == MenuPage(response_menu)
     assert itau._menu_page == MenuPage(response_menu)
 
-    assert request.call_count == 1
+    assert request1.call_count == 1
+    assert request2.call_count == 1
 
 
 @responses.activate

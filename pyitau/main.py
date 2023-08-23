@@ -4,7 +4,7 @@ from cached_property import cached_property
 from pyitau.pages import (AuthenticatedHomePage, CardDetails,
                           CheckingAccountFullStatement, CheckingAccountMenu,
                           CheckingAccountStatementsPage, FirstRouterPage,
-                          Menu2Page, MenuPage, PasswordPage, SecondRouterPage,
+                          MenuPage, PasswordPage, SecondRouterPage,
                           ThirdRouterPage)
 
 ROUTER_URL = 'https://internetpf5.itau.com.br/router-app/router'
@@ -41,14 +41,8 @@ class Itau:
         """
         Get and return the credit card invoice.
         """
-        self._session.post(ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"})
-
-        response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
-        # TODO: is it possible to use only Menu2Page and remove MenuPage?
-        menu = Menu2Page(response.text)
-
         response = self._session.post(ROUTER_URL, headers={
-            "op": menu.checking_cards_op,
+            "op": self._menu_page.checking_cards_op,
             "X-FLOW-ID": self._flow_id,
             "X-CLIENT-ID": self._client_id,
             "X-Requested-With": "XMLHttpRequest",
@@ -194,8 +188,8 @@ class Itau:
 
     @cached_property
     def _menu_page(self):
-        headers = {'op': self._home.op, 'segmento': 'VAREJO'}
-        response = self._session.post(ROUTER_URL, headers=headers)
+        self._session.post(ROUTER_URL, headers={"op": self._home.op, "segmento": "VAREJO"})
+        response = self._session.post(ROUTER_URL, headers={"op": self._home.menu_op})
         return MenuPage(response.text)
 
     @cached_property

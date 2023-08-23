@@ -34,13 +34,6 @@ def response_authenticate8():
 
 
 @pytest.fixture
-def response_menu():
-    with open('./tests/responses/menu.html') as file:
-        body = file.read()
-    return body
-
-
-@pytest.fixture
 def response_cards_page():
     with open('./tests/responses/cards_page.html') as f:
         return f.read()
@@ -106,21 +99,33 @@ def response_authenticated_home():
 @pytest.fixture
 def response_checking_account_menu():
     return """
-        $(".accordion-box-conta-corrente").itauAccordion();
-        function carregarContaCorrente() {
-            if($(".btnExibirBoxContaCorrente").hasClass("ajaxRuned")){
-                mudarCookieBoxAberto("boxContaCorrente");
-                return;
-            }
-            BoxHelper.renderConteudoBox({
-                urlBox : "PYITAU_OP_statement",
-                seletorContainer : ".conteudoBoxContaCorrente",
-                onComplete : function() {
-                    $(".btnExibirBoxContaCorrente").addClass("ajaxRuned");
-                    criarCookieBoxAberto("boxContaCorrente");
+    <script id='scriptmenuContexto' type="text/javascript">
+        var obterMenuContextomenuContexto = function() {
+            $(".blockUI").remove();
+            $.ajax({
+                url : "PYITAU_OP_statement",
+                dataType : "html",
+                method : "POST",
+                showLoading:false,
+                data : {
+                    "contexto" : "",
+                    "montarModulo" : "",
+                    "mapaDoSite" : ""
+                },
+                headers : {
+                    "ajaxRequest" : true
+                },
+                success : function(data) {
+                    $('#menuContexto').replaceWith(data);
+                    $('html').removeClass("uiConfiguration-runed");
                 }
             });
-        }
+        };
+
+        $(function() {
+            obterMenuContextomenuContexto();
+        });
+    </script>
     """
 
 
@@ -143,8 +148,19 @@ def response_checking_statements():
 
 
 @pytest.fixture
-def response_menu2():
+def response_menu():
     return """
+        <li class="titulo "  >
+            <a onclick="GA.pushMegaMenu('contaCorrente','homeCategoria');disparar('Clique;...');"
+                data-op='PYITAU_OP_conta_corrente'
+                href="javascript:;"
+                tabindex="2"
+
+                >
+                conta corrente
+            </a>
+        </li>
+
         <li class="titulo "  >
             <a onclick="GA.pushMegaMenu('cartoes','homeCategoria');...;"
                 data-op='PYITAU_OP_cartoes'
