@@ -75,7 +75,6 @@ class Itau:
         """
         Get and return the statements of the last days.
         """
-
         response = self._session.post(
             ROUTER_URL,
             data={"periodoConsulta": days},
@@ -105,16 +104,18 @@ class Itau:
         return response.json()
 
     def _authenticate2(self):
-        data = {
-            "portal": "005",
-            "pre-login": "pre-login",
-            "tipoLogon": "7",
-            "usuario.agencia": self.agency,
-            "usuario.conta": self.account,
-            "usuario.dac": self.account_digit,
-            "destino": "",
-        }
-        response = self._session.post(ROUTER_URL, data=data)
+        response = self._session.post(
+            ROUTER_URL,
+            data={
+                "portal": "005",
+                "pre-login": "pre-login",
+                "tipoLogon": "7",
+                "usuario.agencia": self.agency,
+                "usuario.conta": self.account,
+                "usuario.dac": self.account_digit,
+                "destino": "",
+            },
+        )
         page = pages.FirstRouter(response.text)
         self._session.cookies.set("X-AUTH-TOKEN", page.auth_token)
         self._op2 = page.secapdk
@@ -124,66 +125,61 @@ class Itau:
         self._client_id = page.client_id
 
     def _authenticate3(self):
-        headers = {
-            "op": self._op2,
-            "X-FLOW-ID": self._flow_id,
-            "X-CLIENT-ID": self._client_id,
-            "renderType": "parcialPage",
-            "X-Requested-With": "XMLHttpRequest",
-        }
-
-        self._session.post(ROUTER_URL, headers=headers)
+        self._session.post(
+            ROUTER_URL,
+            headers={
+                "op": self._op2,
+                "X-FLOW-ID": self._flow_id,
+                "X-CLIENT-ID": self._client_id,
+                "renderType": "parcialPage",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        )
 
     def _authenticate4(self):
-        headers = {"op": self._op3}
-        self._session.post(ROUTER_URL, headers=headers)
+        self._session.post(ROUTER_URL, headers={"op": self._op3})
 
     def _authenticate5(self):
-        headers = {"op": self._op4}
-        response = self._session.post(ROUTER_URL, headers=headers)
+        response = self._session.post(ROUTER_URL, headers={"op": self._op4})
         page = pages.SecondRouter(response.text)
         self._op5 = page.op_sign_command
         self._op6 = page.op_maquina_pirata
         self._op7 = page.guardiao_cb
 
     def _authenticate6(self):
-        headers = {"op": self._op5}
-        self._session.post(ROUTER_URL, headers=headers)
+        self._session.post(ROUTER_URL, headers={"op": self._op5})
 
     def _authenticate7(self):
-        headers = {"op": self._op6}
-        self._session.post(ROUTER_URL, headers=headers)
+        self._session.post(ROUTER_URL, headers={"op": self._op6})
 
     def _authenticate8(self):
-        headers = {"op": self._op7}
-        response = self._session.post(ROUTER_URL, headers=headers)
-
+        response = self._session.post(ROUTER_URL, headers={"op": self._op7})
         page = pages.ThirdRouter(response.text)
+
         if self.holder_name and page.has_account_holders_form:
-            holders_op = page.op
             holder, holder_index = page.find_account_holder(self.holder_name)
-            headers = {
-                "op": holders_op,
-            }
-            data = {
-                "nomeTitular": holder,
-                "indexTitular": holder_index,
-            }
-            self._session.post(ROUTER_URL, headers=headers, data=data)
+            self._session.post(
+                ROUTER_URL,
+                headers={"op": page.op},
+                data={
+                    "nomeTitular": holder,
+                    "indexTitular": holder_index,
+                },
+            )
             self._authenticate6()
             self._authenticate7()
-            headers = {"op": self._op7}
-            response = self._session.post(ROUTER_URL, headers=headers)
+            response = self._session.post(ROUTER_URL, headers={"op": self._op7})
 
         page = pages.Password(response.text)
         self._letter_password = page.letter_password(self.password)
         self._op8 = page.op
 
     def _authenticate9(self):
-        headers = {"op": self._op8}
-        data = {"op": self._op8, "senha": self._letter_password}
-
-        response = self._session.post(ROUTER_URL, headers=headers, data=data)
+        response = self._session.post(
+            ROUTER_URL,
+            headers={"op": self._op8},
+            data={"op": self._op8, "senha": self._letter_password},
+        )
         self._home = pages.AuthenticatedHome(response.text)
 
     @cached_property
