@@ -224,7 +224,7 @@ class CheckingAccountStatements(SoupPage):
         return self._soup.find("a").attrs["data-op"]
 
 
-class CardsPage(SoupPage):
+class Cards(SoupPage):
     @property
     def card_details_op(self):
         form_invoice = self._soup.find("form", id="formVerFaturaRedesenho")
