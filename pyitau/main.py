@@ -127,7 +127,7 @@ class Itau:
             "Op": self.pix_page.pix_impressao_op,
         }
 
-        path = os.path.abspath(Path(__file__) / ".." / "files" / "pix_pdf.html")
+        path = Path(__file__).parent / "files" / "pix_pdf.html"
         with open(path, "r") as fname:
             template = fname.read()
 
