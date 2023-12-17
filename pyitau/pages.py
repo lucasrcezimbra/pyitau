@@ -221,7 +221,7 @@ class CheckingCardsMenu(TextPage):
 class CheckingAccountStatements(SoupPage):
     @property
     def full_statement_op(self):
-        return self._soup.find("a").attrs["data-op"]
+        return self._soup.find("a", attrs={"href":"javascript:;"}).attrs["data-op"]
 
 
 class Cards(SoupPage):
