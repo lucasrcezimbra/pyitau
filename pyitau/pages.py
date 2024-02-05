@@ -237,23 +237,15 @@ class Cards(SoupPage):
 
 
 class CheckingAccountFullStatement(TextPage):
+    _url_pattern = 'url\s*=\s*"([^"]*)";'
+
     @property
     def filter_statements_by_period_op(self):
-        pattern = (
-            r"function consultarLancamentosPorPeriodo.*"
-            r'"periodoConsulta" : parametrosPeriodo.*?'
-            r'url = "(.*?)";'
-        )
-        return re.search(pattern, self._text, flags=re.DOTALL).group(1)
+        return re.findall(self._url_pattern, self._text, flags=re.DOTALL)[2]
 
     @property
     def filter_statements_by_month_op(self):
-        pattern = (
-            r"function consultarLancamentosPorPeriodo.*"
-            r'"mesCompleto" : parametrosPeriodo.*?'
-            r'url = "(.*?)";'
-        )
-        return re.search(pattern, self._text, flags=re.DOTALL).group(1)
+        return re.findall(self._url_pattern, self._text, flags=re.DOTALL)[1]
 
 
 class CardDetails(TextPage):
