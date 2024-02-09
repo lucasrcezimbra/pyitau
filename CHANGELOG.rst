@@ -2,6 +2,15 @@ Changelog
 =========
 
 
+1.3.1 (2024-02-09)
+------------------
+* Fix Account statements `#220`. Thanks to `@andreroggeri`_.
+* Fix dependabot
+
+.. _`@andreroggeri`: https://github.com/andreroggeri
+.. _`#220`: https://github.com/lucasrcezimbra/pyitau/pull/220
+
+
 1.3.0 (2023-08-23)
 ------------------
 * Add support for multiple cards `#205`_ and `#209`_. Thanks to `@ivancrneto`_
