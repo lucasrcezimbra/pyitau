@@ -1,42 +1,161 @@
 <script>
-	function consultarLancamentosPorPeriodo(parametrosPeriodo,
-			opcaoSelecionadaPeriodo) {
-		var parametros = {};
-		var url;
+    function consultarLancamentosPorPeriodo(parametrosPeriodo,
+                                                opcaoSelecionadaPeriodo) {
 
-		$('#extrato-grid-lancamentos, #extrato-grid-lancamentos-futuros-entrada, #extrato-grid-lancamentos-futuros-saida').empty();
-		$('#extrato-btn-ver-mais-lancamentos').empty();
+            var parametros = {};
+            var url;
 
-		if (filtro.periodoConsulta !== parametrosPeriodo) {
+            $('.date-mask-custom').removeClass('date-mask-custom-erro');
+            $('.box-filtro-personalizado').removeClass('box-filtro-erro');
+            $(".data-error").attr("style", "display:none");
+            $('.date-mask-custom-inicial').removeClass('date-mask-custom-erro-inicial');
+            $('.date-mask-custom-final').removeClass('date-mask-custom-erro-final');
+            $('.box-filtro-personalizado-inicial').removeClass('box-filtro-erro-inicial');
+            $('.box-filtro-personalizado-final').removeClass('box-filtro-erro-final');
 
-			if (opcaoSelecionadaPeriodo === "mesCompleto") {
-				parametros = {
-					"mesCompleto" : parametrosPeriodo
-				};
-				filtro.mesCompleto = parametrosPeriodo;
-				filtro.periodoConsulta = null;
-				url = "PYITAU_OP_MONTH_filter_statements=;";
+            if (document.getElementById("btn-aplicar-filtros")) {
+                document.getElementById("btn-aplicar-filtros").disabled = true;
+            }
 
-			} else {
+            if (filtro.periodoConsulta !== parametrosPeriodo) {
 
-				filtro.mesCompleto = null;
-				filtro.periodoConsulta = parametrosPeriodo;
+                if (opcaoSelecionadaPeriodo == "periodoDeAte") {
+                    $(".data-error").attr("style", "display:none");
+                    $('.date-mask-custom').removeClass('date-mask-custom-erro');
+                    $('.date-mask-custom-inicial').removeClass('date-mask-custom-erro-inicial');
+                    $('.date-mask-custom-final').removeClass('date-mask-custom-erro-final');
+                    $('.box-filtro-personalizado-inicial').removeClass('box-filtro-erro-inicial');
+                    $('.box-filtro-personalizado-final').removeClass('box-filtro-erro-final');
+                    $('.box-filtro-personalizado').removeClass('box-filtro-erro');
+                    debugger
+                    var dateFrom = ($("input.date-from").val()).replaceAll("/", "-");
+                    var dateTo = ($("input.date-to").val()).replaceAll("/", "-");
+                    var atualData = new Date();
+                    const novadateFrom = $("input.date-from").val();
+                    const novadateTo = $("input.date-to").val();
+                    var data1 = novadateFrom.split(/\//);
+                    var data11 = [data1[1], data1[0], data1[2]].join('/');
+                    var data2 = novadateTo.split(/\//);
+                    var data22 = [data2[1], data2[0], data2[2]].join('/');
+                    const dataInicialFormatada = new Date(data11);
+                    const dataFinalFormatada = new Date(data22);
+                    var timeDiff = Math.abs(dataFinalFormatada.getTime() - dataInicialFormatada.getTime());
+                    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    var data2000 = new Date('01-01-2000');
+                    var data122022 = new Date('12-01-2022');
+                    var dataLimite = new Date(new Date().setDate(atualData.getDate() - 120));
+                    var dataLimiteFormatada = new Date(dataLimite);
+                    //var dataLimete60 = moment().subtract(60, 'days').format('DD/MM/YYYY');
+                    var novaDataLimite = new Date(new Date(dataInicialFormatada).setDate(dataInicialFormatada.getDate() + 1));
+                    var novaDataLimite12 = novaDataLimite.toLocaleString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                    var dateFromMais1 = novaDataLimite12.replaceAll("/", "-");
 
-				// $('#extrato-grid-lancamentos-futuros').empty();
-				$('#extrato-btn-ver-mais-lancamentos-futuros').empty();
+                    /*if(dataInicialFormatada.toLocaleString('pt-br',{ year: 'numeric', month: '2-digit', day: '2-digit' }) == dataLimete60){
+                        dateFrom = dateFromMais1;
+                    }*/
 
-				$('#extrato-grid-outros-lancamentos').empty();
+                    if (dataInicialFormatada.toLocaleString('pt-br', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    }) != novadateFrom) {
+                        $('.date-mask-custom-inicial').addClass('date-mask-custom-erro-inicial');
+                        $('.box-filtro-personalizado-inicial').addClass('box-filtro-erro-inicial');
+                        $(".erro-data-inicial-invalida").attr("style", "display:block");
+                        return;
+                    } else if (dataFinalFormatada.toLocaleString('pt-br', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    }) != novadateTo) {
+                        $('.date-mask-custom-final').addClass('date-mask-custom-erro-final');
+                        $('.box-filtro-personalizado-final').addClass('box-filtro-erro-final');
+                        $(".erro-data-final-invalida").attr("style", "display:block");
+                        return;
+                    } else if (dataInicialFormatada > dataFinalFormatada) {
+                        $('.date-mask-custom').addClass('date-mask-custom-erro');
+                        $('.box-filtro-personalizado').addClass('box-filtro-erro');
+                        $(".erro-data-inicial-maior").attr("style", "display:block");
+                        return;
+                    } else if (dataFinalFormatada > atualData) {
+                        $('.date-mask-custom').addClass('date-mask-custom-erro');
+                        $('.box-filtro-personalizado').addClass('box-filtro-erro');
+                        $(".erro-data-final-maior-que-data-atual").attr("style", "display:block");
+                        return;
+                    } else if (diffDays > 120) {
+                        console.log(diffDays)
+                        $('.date-mask-custom').addClass('date-mask-custom-erro');
+                        $('.box-filtro-personalizado').addClass('box-filtro-erro');
+                        $(".erro-data-maior-120dias").attr("style", "display:block");
+                        return;
+                    } else if (dataInicialFormatada < data122022) {
+                        $('.date-mask-custom').addClass('date-mask-custom-erro');
+                        $('.box-filtro-personalizado').addClass('box-filtro-erro');
+                        $(".erro-data-inicial-anterior-12-2022").attr("style", "display:block");
+                        return;
+                    } else {
+                        filtro.mesCompleto = null;
+                        filtro.periodoConsulta = dateFrom + ";" + dateTo;
+                        console.log(filtro.periodoConsulta);
+                        $('#extrato-btn-ver-mais-lancamentos-futuros').empty();
+                        $('#extrato-grid-outros-lancamentos').empty();
+                        $('#btn-opcoes-filtros').attr('aria-expanded', 'false');
+                        filtro.mesCompleto = null;
+                        $("#month-range-picker").addClass("ng-hide");
+                        parametros = {
+                            "dataInicio": dateFrom,
+                            "dataFinal": dateTo
+                        };
+                        console.log(parametros);
+                        var flagLancamentosFuturos = "filtrarDataPersonalizada";
+                        tagueamentoFiltroPersonalizado(flagLancamentosFuturos);
 
-				parametros = {
-					"periodoConsulta" : parametrosPeriodo
-				};
-				url = "PYITAU_OP_PERIOD_filter_statements=;";
-				
-				armazenaValoresFiltro("periodoVisualizacao", filtroLancamentos.filtroSelecionado().periodoConsulta);
-			}
-			adobeFiltroPeriodoExtrato(filtro, true);
-		}
-		checkCookieSalvarFiltros() && setCookies("filtro_periodo_" + iDPF, filtroLancamentos.filtroSelecionado().periodoConsulta);
-		filtraExtrato(parametros, url);
-	}
+                        url = "PYITAU_OP_START_END_filter_statements=;";
+                        armazenaValoresFiltro("periodoVisualizacao", filtroLancamentos.filtroSelecionado().periodoConsulta);
+                        //var dateFrom = ($("input.date-from").val()).replaceAll("-", "/");
+                        //var dateTo = ($("input.date-to").val()).replaceAll("-", "/");
+
+                    }
+                } else if (opcaoSelecionadaPeriodo === "mesCompleto") {
+                    parametros = {
+                        "mesCompleto": parametrosPeriodo
+                    };
+                    filtro.mesCompleto = parametrosPeriodo;
+                    filtro.periodoConsulta = null;
+                    url = "PYITAU_OP_MONTH_filter_statements=;";
+                    $(".modal-filtros-data").addClass("display-none");
+                    $('#btn-opcoes-filtros').attr('aria-expanded', 'false');
+                } else {
+                    filtro.mesCompleto = null;
+                    filtro.periodoConsulta = parametrosPeriodo;
+
+                    // $('#extrato-grid-lancamentos-futuros').empty();
+                    $('#extrato-btn-ver-mais-lancamentos-futuros').empty();
+
+                    $('#extrato-grid-outros-lancamentos').empty();
+
+                    parametros = {
+                        "periodoConsulta": parametrosPeriodo
+                    };
+
+                    url = "PYITAU_OP_PERIOD_filter_statements=;";
+                    $(".modal-filtros-data").addClass("display-none");
+                    $('#btn-opcoes-filtros').attr('aria-expanded', 'false')
+                    armazenaValoresFiltro("periodoVisualizacao", filtroLancamentos.filtroSelecionado().periodoConsulta);
+                }
+                        validaData();
+                adobeFiltroPeriodoExtrato(filtro, true);
+            }
+
+            $('#extrato-grid-lancamentos, #extrato-grid-lancamentos-futuros-entrada, #extrato-grid-lancamentos-futuros-saida').empty();
+            $('#extrato-btn-ver-mais-lancamentos').empty();
+
+            checkCookieSalvarFiltros() && setCookies("filtro_periodo_" + iDPF, filtroLancamentos.filtroSelecionado().periodoConsulta);
+            filtraExtrato(parametros, url);
+            $('#btn-opcoes-filtros').focus()
+        }
 </script>
