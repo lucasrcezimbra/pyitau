@@ -237,7 +237,7 @@ class Cards(SoupPage):
 
 
 class CheckingAccountFullStatement(TextPage):
-    _url_pattern = 'url\s*=\s*"([^"]*)";'
+    _url_pattern = r'url\s*=\s*"([^"]*)";'
 
     @property
     def filter_statements_by_period_op(self):
