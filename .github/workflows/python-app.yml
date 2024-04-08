@@ -26,7 +26,7 @@ jobs:
         pip install -r requirements-dev.txt
         pre-commit install
     - run: pre-commit run -a
-    - run: pytest
+    - run: pytest --cov=pyitau
     - uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
