@@ -6,10 +6,6 @@ pyitau
     :target: https://badge.fury.io/py/pyitau
     :alt: PyPI
 
-.. image:: https://coveralls.io/repos/github/lucasrcezimbra/pyitau/badge.svg?branch=master
-    :target: https://coveralls.io/github/lucasrcezimbra/pyitau?branch=master
-    :alt: Coverage
-
 .. image:: https://readthedocs.org/projects/pyitau/badge/?version=latest
         :target: https://pyitau.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status

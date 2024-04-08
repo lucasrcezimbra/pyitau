@@ -25,13 +25,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         pre-commit install
-    - name: Run pre-commit
-      run: |
-        pre-commit run -a
-    - name: Test with pytest
-      run: |
-        pytest --cov=pyitau
-    - name: Upload coverage data to coveralls.io
-      run: coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: pre-commit run -a
+    - run: pytest --cov=pyitau
+    - uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: lucasrcezimbra/pyitau
